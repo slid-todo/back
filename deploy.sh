@@ -1,9 +1,16 @@
 #!/bin/bash
 
-APP_DIR="${APP_DIR:-/home/ec2-user/todo}"
+# 어플리케이션 세팅
+APP_DIR="${APP_DIR}"
 JAR_PATH="${APP_DIR}/todo-0.0.1-SNAPSHOT.jar"
 LOG_DIR="${APP_DIR}/logs"
 DEPLOY_DATE=$(date +'%Y-%m-%d')
+
+# DB 세팅
+DB="${DB}"
+DB_PASSWORD="${DB_PASSWORD}"
+DB_USERNAME="${DB_USERNAME}"
+HOST="${HOST}"
 
 mkdir -p "$LOG_DIR"
 

@@ -30,3 +30,7 @@ jobs:
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           APP_DIR: ${{ secrets.APP_DIR }}
+          DB: ${{ secrets.DB }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          HOST: ${{ secrets.HOST }}
