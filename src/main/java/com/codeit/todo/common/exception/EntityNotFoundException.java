@@ -1,12 +1,14 @@
 package com.codeit.todo.common.exception;
 
 import com.codeit.todo.common.exception.payload.ErrorStatus;
+import com.codeit.todo.common.exception.user.UserNotFoundException;
 import java.time.LocalDateTime;
 import lombok.Getter;
 
 /**
  * 엔티티를 찾지 못했을 경우 발생하는 상위 예외 클래스입니다. 구체적인 예외 클래스는 해당 클래스를 상속받아 구현합니다. (UserNotFoundException 참고)
  *
+ * @see UserNotFoundException
  * @see ApplicationException
  */
 @Getter
