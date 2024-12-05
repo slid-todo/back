@@ -26,7 +26,14 @@ jobs:
 
       - name: Deploy to Remote Server
         run: |
-          ssh -i ~/.ssh/private_key.pem ${{ secrets.USER }}@${{ secrets.HOST }} 'bash -s' < ./deploy.sh
+          ssh -i ~/.ssh/private_key.pem ${{ secrets.USER }}@${{ secrets.HOST }} '
+            export APP_DIR="${{ secrets.APP_DIR }}";
+            export DB="${{ secrets.DB }}";
+            export DB_PASSWORD="${{ secrets.DB_PASSWORD }}";
+            export DB_USERNAME="${{ secrets.DB_USERNAME }}";
+            export HOST="${{ secrets.HOST }}";
+            bash -s
+          ' < ./deploy.sh
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           APP_DIR: ${{ secrets.APP_DIR }}
