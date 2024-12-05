@@ -10,5 +10,5 @@ if [ ! -z "$PID" ]; then
 fi
 
 echo "Starting new application..."
-nohup java -jar "$JAR_PATH" > /dev/null 2>&1 &
+nohup java -jar todo-0.0.1-SNAPSHOT.jar > todo.log 2>&1 &
 echo "Application started!"
