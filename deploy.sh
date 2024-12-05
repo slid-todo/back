@@ -1,7 +1,7 @@
 #!/bin/bash
 
 APP_DIR="${APP_DIR:-/home/ec2-user/todo}"
-JAR_PATH="${APP_DIR}/todo.jar"
+JAR_PATH="${APP_DIR}/todo-0.0.1-SNAPSHOT.jar"
 
 PID=$(lsof -t -i:8080)
 if [ ! -z "$PID" ]; then
@@ -10,5 +10,5 @@ if [ ! -z "$PID" ]; then
 fi
 
 echo "Starting new application..."
-nohup java -jar todo-0.0.1-SNAPSHOT.jar > todo.log 2>&1 &
+nohup java -jar "$JAR_PATH" > todo.log 2>&1 &
 echo "Application started!"
