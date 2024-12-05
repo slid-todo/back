@@ -12,12 +12,6 @@ DB_PASSWORD="${DB_PASSWORD}"
 DB_USERNAME="${DB_USERNAME}"
 HOST="${HOST}"
 
-echo "APP_DIR" : "${APP_DIR}"
-echo "DB" : "${DB}"
-echo "DB_PASSWORD" : "${DB_PASSWORD}"
-echo "DB_USERNAME" : "${DB_USERNAME}"
-echo "HOST" : "${HOST}"
-
 mkdir -p "$LOG_DIR"
 
 PID=$(lsof -t -i:8080)
@@ -30,4 +24,13 @@ LOG_FILE="${LOG_DIR}/todo-${DEPLOY_DATE}.log"
 
 echo "Starting new application..."
 nohup java -jar "$JAR_PATH" > "$LOG_FILE" 2>&1 &
-echo "Application started!"
+NEW_PID=$!
+
+sleep 5
+
+# 서버가 실행 중인지 확인
+if ps -p $NEW_PID > /dev/null; then
+  echo "Application started successfully!"
+else
+  echo "Server did not start. Please check the logs: $LOG_FILE"
+fi
