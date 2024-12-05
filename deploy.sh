@@ -12,6 +12,12 @@ DB_PASSWORD="${DB_PASSWORD}"
 DB_USERNAME="${DB_USERNAME}"
 HOST="${HOST}"
 
+echo "APP_DIR" : "${APP_DIR}"
+echo "DB" : "${DB}"
+echo "DB_PASSWORD" : "${DB_PASSWORD}"
+echo "DB_USERNAME" : "${DB_USERNAME}"
+echo "HOST" : "${HOST}"
+
 mkdir -p "$LOG_DIR"
 
 PID=$(lsof -t -i:8080)
