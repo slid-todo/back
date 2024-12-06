@@ -22,5 +22,5 @@ spring:
         default_batch_fetch_size: 500
     database: mysql
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     defer-datasource-initialization: true
