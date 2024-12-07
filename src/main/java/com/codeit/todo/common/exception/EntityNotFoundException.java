@@ -13,6 +13,9 @@ import lombok.Getter;
  */
 @Getter
 public class EntityNotFoundException extends ApplicationException{
+    private static final String ENTITY_NOT_FOUND_EXCEPTION_MESSAGE = "해당하는 엔티티를 찾을 수 없습니다.";
+    private static final int ENTITY_NOT_FOUND_EXCEPTION_STATUS_CODE = 404;
+
     private final String entityId;
     private final String entityType;
 
@@ -22,7 +25,7 @@ public class EntityNotFoundException extends ApplicationException{
      * @param entityType 엔티티 타입 (User 등)
      */
     public EntityNotFoundException(String entityId, String entityType) {
-        super(new ErrorStatus("해당하는 엔티티를 찾을 수 없습니다.", 404, LocalDateTime.now()));
+        super(new ErrorStatus(ENTITY_NOT_FOUND_EXCEPTION_MESSAGE, ENTITY_NOT_FOUND_EXCEPTION_STATUS_CODE, LocalDateTime.now()));
         this.entityId = entityId;
         this.entityType = entityType;
     }
