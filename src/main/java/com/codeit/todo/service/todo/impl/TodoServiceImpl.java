@@ -69,7 +69,7 @@ public class TodoServiceImpl implements TodoService {
     @Override
     public CreateTodoResponse saveTodo(int userId, CreateTodoRequest request) {
         String uploadUrl = "";
-        if (Objects.nonNull(request.imageEncodedBase64())) {
+        if (Objects.nonNull(request.imageEncodedBase64()) && !request.imageEncodedBase64().isEmpty()) {
             uploadUrl = storageService.uploadFile(request.imageEncodedBase64(), request.imageName());
         }
 

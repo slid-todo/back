@@ -29,7 +29,7 @@ public class S3ServiceImpl implements StorageService {
      */
     @Override
     public String uploadFile(String fileEncodedBase64, String fileName) {
-        if (Objects.isNull(fileName)) {
+        if (Objects.isNull(fileName) || fileName.isEmpty()) {
             throw new ApplicationException(
                     ErrorStatus.toErrorStatus("파일명이 첨부되지 않았습니다.", 400)
             );
