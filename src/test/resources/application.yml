@@ -10,6 +10,16 @@ spring:
     show-sql: true
     open-in-view: false
 
+  cloud:
+    aws:
+      credentials:
+        access-key: fake-access-key
+        secret-key: fake-secret-key
+      region:
+        static: ap-northeast-2
+      s3:
+        bucket: fake-bucket-name
+    
 logging:
   level:
     org.hibernate.SQL: debug
