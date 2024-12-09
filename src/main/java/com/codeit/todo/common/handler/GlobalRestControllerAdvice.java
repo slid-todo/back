@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 @RequiredArgsConstructor
-@RequestMapping(value="/api/v1/exceptions")
 public class GlobalRestControllerAdvice {
 
     /**
