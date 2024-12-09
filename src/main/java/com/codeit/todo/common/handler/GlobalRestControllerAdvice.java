@@ -5,6 +5,8 @@ import com.codeit.todo.common.exception.payload.ErrorStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
@@ -24,4 +26,5 @@ public class GlobalRestControllerAdvice {
 
         return new ResponseEntity<>(errorStatus, errorStatus.toHttpStatus());
     }
+
 }
