@@ -30,12 +30,8 @@ public class SecurityConfig {
                     .requestMatchers("/swagger/**").permitAll()
                     .requestMatchers("/**").permitAll()
                     .anyRequest().permitAll()
-//                    .anyRequest().authenticated()
+//                        .anyRequest().authenticated()
             )
-                .exceptionHandling( e->{
-                e.authenticationEntryPoint(new CustomAuthenticationEntryPoint());
-                e.accessDeniedHandler(new CustomAccessDeniedHandler());
-                })
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
