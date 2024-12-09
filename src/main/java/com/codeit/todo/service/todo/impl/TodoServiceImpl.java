@@ -1,11 +1,15 @@
 package com.codeit.todo.service.todo.impl;
 
+import com.codeit.todo.common.exception.EntityNotFoundException;
 import com.codeit.todo.domain.Goal;
 import com.codeit.todo.domain.Todo;
 import com.codeit.todo.repository.GoalRepository;
 import com.codeit.todo.repository.TodoRepository;
+import com.codeit.todo.service.storage.StorageService;
 import com.codeit.todo.service.todo.TodoService;
+import com.codeit.todo.web.dto.request.todo.CreateTodoRequest;
 import com.codeit.todo.web.dto.request.todo.ReadTodoRequest;
+import com.codeit.todo.web.dto.response.todo.CreateTodoResponse;
 import com.codeit.todo.web.dto.response.todo.ReadTodosResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
@@ -22,6 +26,8 @@ public class TodoServiceImpl implements TodoService {
 
     private final TodoRepository todoRepository;
     private final GoalRepository goalRepository;
+
+    private final StorageService storageService;
 
     @Transactional(readOnly = true)
     @Override
@@ -58,5 +64,20 @@ public class TodoServiceImpl implements TodoService {
                 .toList();
 
         return new SliceImpl<>(responseList, pageable, todos.hasNext());
+    }
+
+    @Override
+    public CreateTodoResponse saveTodo(int userId, CreateTodoRequest request) {
+        String uploadUrl = "";
+        if (Objects.nonNull(request.imageEncodedBase64()) && !request.imageEncodedBase64().isEmpty()) {
+            uploadUrl = storageService.uploadFile(request.imageEncodedBase64(), request.imageName());
+        }
+
+        Goal goal = goalRepository.findById(request.goalId())
+                .orElseThrow(() -> new EntityNotFoundException(request.goalId(), "goal"));
+        Todo todo = request.toEntity(uploadUrl, goal);
+        Todo savedTodo = todoRepository.save(todo);
+
+        return CreateTodoResponse.fromEntity(savedTodo);
     }
 }

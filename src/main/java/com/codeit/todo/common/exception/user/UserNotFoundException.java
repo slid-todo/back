@@ -11,7 +11,7 @@ import com.codeit.todo.common.exception.EntityNotFoundException;
 
 public class UserNotFoundException extends EntityNotFoundException {
 
-    public UserNotFoundException(String entityId, String entityType) {
+    public UserNotFoundException(int entityId, String entityType) {
         super(entityId, entityType);
     }
 }
