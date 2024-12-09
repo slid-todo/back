@@ -14,11 +14,11 @@ public record ErrorStatus(String message, int status,
                           @JsonSerialize(using = LocalDateTimeSerializer.class)
                           @JsonDeserialize(using = LocalDateTimeDeserializer.class) LocalDateTime timestamp) {
 
-    public static ErrorStatus toErrorStatus(String message, int status, LocalDateTime timeStamp) {
+    public static ErrorStatus toErrorStatus(String message, int status) {
         return ErrorStatus.builder()
             .message(message)
             .status(status)
-            .timestamp(timeStamp)
+            .timestamp(LocalDateTime.now())
             .build();
     }
 
