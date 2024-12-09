@@ -24,3 +24,6 @@ spring:
     hibernate:
       ddl-auto: update
     defer-datasource-initialization: true
+
+jwtpassword:
+  source: ${JWT_SECRET_KEY}

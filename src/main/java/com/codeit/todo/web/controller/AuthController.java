@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/api/v1/auths")
 public class AuthController {
 
     private final UserService userService;
@@ -26,7 +26,6 @@ public class AuthController {
     })
     @PostMapping(value = "/login")
     public Response login(@RequestBody LoginRequest loginRequest, HttpServletResponse httpServletResponse){
-        String email = loginRequest.email();
         String token= userService.login(loginRequest);
         httpServletResponse.setHeader("token", token);
         return Response.ok( "로그인 성공");
