@@ -32,11 +32,11 @@ public class UserServiceImpl implements UserService {
         String password = loginRequest.password();
 
         try{
-            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-
             User user = userRepository.findByEmail(email)
                     .orElseThrow(()-> new UserNotFoundException(email, "User"));
+
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
             return jwtTokenProvider.createToken(email);
         }catch(Exception e){
