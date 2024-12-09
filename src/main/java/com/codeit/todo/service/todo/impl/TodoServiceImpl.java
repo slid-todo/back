@@ -74,7 +74,7 @@ public class TodoServiceImpl implements TodoService {
         }
 
         Goal goal = goalRepository.findById(request.goalId())
-                .orElseThrow(() -> new EntityNotFoundException(request.goalId(), "goal"));
+                .orElseThrow(() -> new EntityNotFoundException(String.valueOf(request.goalId()), "goal"));
         Todo todo = request.toEntity(uploadUrl, goal);
         Todo savedTodo = todoRepository.save(todo);
 
