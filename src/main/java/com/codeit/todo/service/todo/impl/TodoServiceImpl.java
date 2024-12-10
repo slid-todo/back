@@ -9,10 +9,16 @@ import com.codeit.todo.service.storage.StorageService;
 import com.codeit.todo.service.todo.TodoService;
 import com.codeit.todo.web.dto.request.todo.CreateTodoRequest;
 import com.codeit.todo.web.dto.request.todo.ReadTodoRequest;
+import com.codeit.todo.web.dto.request.todo.ReadTodoWithGoalRequest;
 import com.codeit.todo.web.dto.response.todo.CreateTodoResponse;
 import com.codeit.todo.web.dto.response.todo.ReadTodosResponse;
+import com.codeit.todo.web.dto.response.todo.ReadTodosWithGoalsResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -79,5 +85,38 @@ public class TodoServiceImpl implements TodoService {
         Todo savedTodo = todoRepository.save(todo);
 
         return CreateTodoResponse.fromEntity(savedTodo);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<ReadTodosWithGoalsResponse> findTodoListWithGoals(int userId, @Valid ReadTodoWithGoalRequest request) {
+        List<Goal> goals = goalRepository.findByUser_UserId(userId);
+
+        return goals.stream()
+                .map(goal -> {
+                    Pageable pageable = PageRequest.of(0, request.size());
+                    Slice<Todo> todos = todoRepository.findByGoal_GoalIdOrderByTodoIdDesc(goal.getGoalId(), pageable);
+
+                    List<ReadTodosResponse> responses = todos.getContent().stream()
+                            .map(todo -> new ReadTodosResponse(
+                                    todo.getTodoId(),
+                                    todo.getTodoTitle(),
+                                    todo.getStartDate(),
+                                    todo.getEndDate(),
+                                    todo.getTodoStatus(),
+                                    todo.getTodoLink(),
+                                    todo.getTodoPic(),
+                                    todo.getCreatedAt()
+                            ))
+                            .toList();
+
+                    return new ReadTodosWithGoalsResponse(
+                            goal.getGoalId(),
+                            goal.getGoalTitle(),
+                            responses
+                    );
+
+                })
+                .toList();
     }
 }
