@@ -12,6 +12,7 @@ import com.codeit.todo.service.todo.TodoService;
 import com.codeit.todo.web.dto.request.todo.CreateTodoRequest;
 import com.codeit.todo.web.dto.request.todo.ReadTodoRequest;
 import com.codeit.todo.web.dto.request.todo.ReadTodoWithGoalRequest;
+import com.codeit.todo.web.dto.response.complete.ReadCompleteResponse;
 import com.codeit.todo.web.dto.response.todo.CreateTodoResponse;
 import com.codeit.todo.web.dto.response.todo.ReadTodoWithGoalResponse;
 import com.codeit.todo.web.dto.response.todo.ReadTodosResponse;
@@ -64,17 +65,33 @@ public class TodoServiceImpl implements TodoService {
         }
 
         List<ReadTodosResponse> responseList = todos.getContent().stream()
-                .map(todo -> new ReadTodosResponse(
-                        todo.getTodoId(),
-                        todo.getTodoTitle(),
-                        todo.getStartDate(),
-                        todo.getEndDate(),
-                        todo.getTodoStatus(),
-                        todo.getTodoLink(),
-                        todo.getTodoPic(),
-                        todo.getCreatedAt()
-                ))
-                .toList();
+                .map(todo -> {
+                    List<Complete> completes = completeRepository.findByTodo_TodoId(todo.getTodoId());
+
+                    List<ReadCompleteResponse> completeResponses = completes.stream().map(
+                            complete -> ReadCompleteResponse.builder()
+                                    .completeId(complete.getCompleteId())
+                                    .note(complete.getNote())
+                                    .completeFile(complete.getCompleteFile())
+                                    .completeLink(complete.getCompleteLink())
+                                    .completePic(complete.getCompletePic())
+                                    .createdAt(complete.getCreatedAt())
+                                    .completedDate(complete.getCompletedDate())
+                                    .build()
+                    ).toList();
+
+                    return ReadTodosResponse.builder()
+                            .todoId(todo.getTodoId())
+                            .todoLink(todo.getTodoLink())
+                            .todoStatus(todo.getTodoStatus())
+                            .todoTitle(todo.getTodoTitle())
+                            .startDate(todo.getStartDate())
+                            .endDate(todo.getEndDate())
+                            .todoPic(todo.getTodoPic())
+                            .createdAt(todo.getCreatedAt())
+                            .completes(completeResponses)
+                            .build();
+                }).toList();
 
         return new SliceImpl<>(responseList, pageable, todos.hasNext());
     }
@@ -122,17 +139,33 @@ public class TodoServiceImpl implements TodoService {
                     Slice<Todo> todos = todoRepository.findByGoal_GoalIdOrderByTodoIdDesc(goal.getGoalId(), pageable);
 
                     List<ReadTodosResponse> responses = todos.getContent().stream()
-                            .map(todo -> new ReadTodosResponse(
-                                    todo.getTodoId(),
-                                    todo.getTodoTitle(),
-                                    todo.getStartDate(),
-                                    todo.getEndDate(),
-                                    todo.getTodoStatus(),
-                                    todo.getTodoLink(),
-                                    todo.getTodoPic(),
-                                    todo.getCreatedAt()
-                            ))
-                            .toList();
+                            .map(todo -> {
+                                List<Complete> completes = completeRepository.findByTodo_TodoId(todo.getTodoId());
+
+                                List<ReadCompleteResponse> completeResponses = completes.stream().map(
+                                        complete -> ReadCompleteResponse.builder()
+                                                .completeId(complete.getCompleteId())
+                                                .note(complete.getNote())
+                                                .completeFile(complete.getCompleteFile())
+                                                .completeLink(complete.getCompleteLink())
+                                                .completePic(complete.getCompletePic())
+                                                .createdAt(complete.getCreatedAt())
+                                                .completedDate(complete.getCompletedDate())
+                                                .build()
+                                ).toList();
+
+                                return ReadTodosResponse.builder()
+                                        .todoId(todo.getTodoId())
+                                        .todoLink(todo.getTodoLink())
+                                        .todoStatus(todo.getTodoStatus())
+                                        .todoTitle(todo.getTodoTitle())
+                                        .startDate(todo.getStartDate())
+                                        .endDate(todo.getEndDate())
+                                        .todoPic(todo.getTodoPic())
+                                        .createdAt(todo.getCreatedAt())
+                                        .completes(completeResponses)
+                                        .build();
+                                    }).toList();
 
                     return new ReadTodosWithGoalsResponse(
                             goal.getGoalId(),
@@ -140,8 +173,7 @@ public class TodoServiceImpl implements TodoService {
                             responses
                     );
 
-                })
-                .toList();
+                }).toList();
     }
 
     @Override
