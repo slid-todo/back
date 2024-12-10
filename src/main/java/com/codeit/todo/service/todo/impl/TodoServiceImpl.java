@@ -118,6 +118,7 @@ public class TodoServiceImpl implements TodoService {
                     .todo(savedTodo)
                     .completedDate(date)
                     .createdAt(LocalDateTime.now())
+                    .completeStatus(false)
                     .build();
 
             completes.add(complete);

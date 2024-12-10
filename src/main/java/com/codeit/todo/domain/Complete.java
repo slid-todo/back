@@ -29,19 +29,21 @@ public class Complete {
     private String completeLink;
     private String completeFile;
     private String completePic;
+    private Boolean completeStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "todo_id", nullable = false)
     private Todo todo;
 
     @Builder
-    public Complete(LocalDate completedDate, LocalDateTime createdAt, String note, String completeLink, String completeFile, String completePic, Todo todo) {
+    public Complete(LocalDate completedDate, LocalDateTime createdAt, String note, String completeLink, String completeFile, String completePic, Boolean completeStatus, Todo todo) {
         this.completedDate = completedDate;
         this.createdAt = createdAt;
         this.note = note;
         this.completeLink = completeLink;
         this.completeFile = completeFile;
         this.completePic = completePic;
+        this.completeStatus = completeStatus;
         this.todo = todo;
     }
 
@@ -50,5 +52,6 @@ public class Complete {
         this.completeFile = completeFileUrl;
         this.completeLink = link;
         this.note = note;
+        this.completeStatus = true;
     }
 }
