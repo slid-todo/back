@@ -1,8 +1,10 @@
 package com.codeit.todo.service.todo.impl;
 
 import com.codeit.todo.common.exception.EntityNotFoundException;
+import com.codeit.todo.domain.Complete;
 import com.codeit.todo.domain.Goal;
 import com.codeit.todo.domain.Todo;
+import com.codeit.todo.repository.CompleteRepository;
 import com.codeit.todo.repository.GoalRepository;
 import com.codeit.todo.repository.TodoRepository;
 import com.codeit.todo.service.storage.StorageService;
@@ -19,10 +21,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -33,6 +37,7 @@ public class TodoServiceImpl implements TodoService {
 
     private final TodoRepository todoRepository;
     private final GoalRepository goalRepository;
+    private final CompleteRepository completeRepository;
 
     private final StorageService storageService;
 
@@ -84,6 +89,20 @@ public class TodoServiceImpl implements TodoService {
                 .orElseThrow(() -> new EntityNotFoundException(String.valueOf(request.goalId()), "goal"));
         Todo todo = request.toEntity(uploadUrl, goal);
         Todo savedTodo = todoRepository.save(todo);
+
+        List<Complete> completes = new ArrayList<>();
+        long completeDate = ChronoUnit.DAYS.between(request.startDate(), request.endDate());
+
+        for (long i = 0; i < completeDate; i++) {
+            Complete complete = Complete.builder()
+                    .todo(savedTodo)
+                    .createdAt(LocalDateTime.now())
+                    .build();
+
+            completes.add(complete);
+        }
+
+        completeRepository.saveAll(completes);
 
         return CreateTodoResponse.fromEntity(savedTodo);
     }
