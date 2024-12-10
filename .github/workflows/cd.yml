@@ -32,6 +32,10 @@ jobs:
             export DB_PASSWORD="${{ secrets.DB_PASSWORD }}";
             export DB_USERNAME="${{ secrets.DB_USERNAME }}";
             export HOST="${{ secrets.HOST }}";
+            export JWT_SECRET_KEY="${{ secrets.JWT_SECRET_KEY }}";
+            export S3_ACCESS_KEY="${{ secrets.S3_ACCESS_KEY }}";
+            export S3_SECRET_KEY="${{ secrets.S3_SECRET_KEY }}";
+            export BUCKET_NAME="${{ secrets.BUCKET_NAME }}";
             bash -s
           ' < ./deploy.sh
         env:
@@ -41,3 +45,7 @@ jobs:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_USERNAME: ${{ secrets.DB_USERNAME }}
           HOST: ${{ secrets.HOST }}
+          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+          S3_ACCESS_KEY: ${{ secrets.S3_ACCESS_KEY }}
+          S3_SECRET_KEY: ${{ secrets.S3_SECRET_KEY }}
+          BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
