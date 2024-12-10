@@ -49,6 +49,6 @@ public class GoalServiceImpl implements GoalService {
                 .orElseThrow(()-> new GoalNotFoundException(String.valueOf(goalId), "Goal"));
 
         goal.update(request.title());
-        return UpdateGoalResponse.fromEntity(goalId);
+        return new UpdateGoalResponse(goalId);
     }
 }

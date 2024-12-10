@@ -37,7 +37,7 @@ public class GoalController {
 
     @Transactional
     @Operation(summary = "목표 수정",
-            description = "기존 목표 제목 수정 API, 생성된 목표의 ID 반환")
+            description = "기존 목표 제목 수정 API, 수정된 목표의 ID 반환")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "목표 수정 성공")
     })
