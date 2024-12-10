@@ -2,9 +2,11 @@ package com.codeit.todo.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -28,4 +30,13 @@ public class Goal {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @Builder
+    public Goal(int goalId, String goalTitle, String color, LocalDateTime createdAt, User user) {
+        this.goalId = goalId;
+        this.goalTitle = goalTitle;
+        this.color = color;
+        this.createdAt = createdAt;
+        this.user = user;
+    }
 }
