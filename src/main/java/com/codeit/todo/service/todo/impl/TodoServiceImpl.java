@@ -24,6 +24,7 @@ import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -94,8 +95,11 @@ public class TodoServiceImpl implements TodoService {
         long completeDate = ChronoUnit.DAYS.between(request.startDate(), request.endDate());
 
         for (long i = 0; i < completeDate; i++) {
+            LocalDate date = request.startDate().plusDays(i);
+
             Complete complete = Complete.builder()
                     .todo(savedTodo)
+                    .completedDate(date)
                     .createdAt(LocalDateTime.now())
                     .build();
 
