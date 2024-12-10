@@ -96,7 +96,6 @@ public class TodoServiceImpl implements TodoService {
         return new SliceImpl<>(responseList, pageable, todos.hasNext());
     }
 
-    @Transactional
     @Override
     public CreateTodoResponse saveTodo(int userId, CreateTodoRequest request) {
         String uploadUrl = "";
