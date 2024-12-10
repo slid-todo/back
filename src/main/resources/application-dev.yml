@@ -30,9 +30,6 @@ spring:
       max-file-size: 50MB
       max-request-size: 50MB
 
-jwtpassword:
-  source: ${JWT_SECRET_KEY}
-
   cloud:
     aws:
       credentials:
@@ -42,3 +39,6 @@ jwtpassword:
         static: ap-northeast-2
       s3:
         bucket: ${BUCKET_NAME}
+
+jwtpassword:
+  source: ${JWT_SECRET_KEY}
