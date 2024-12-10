@@ -36,7 +36,15 @@ public class S3ServiceImpl implements StorageService {
         }
 
         try {
-            String base64 = fileEncodedBase64.split(",")[1];
+            String base64;
+
+            // prefix 포함된 경우 (data:image/png;base64,)
+            if (fileEncodedBase64.contains(",")) {
+                base64 = fileEncodedBase64.split(",")[1];
+            } else {
+                base64 = fileEncodedBase64;
+            }
+
             byte[] decodedBytes = Base64.getDecoder().decode(base64);
 
             ObjectMetadata metadata = new ObjectMetadata();

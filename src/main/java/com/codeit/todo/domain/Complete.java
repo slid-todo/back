@@ -44,4 +44,11 @@ public class Complete {
         this.completePic = completePic;
         this.todo = todo;
     }
+
+    public void update(String completePicUrl, String completeFileUrl, String link, String note) {
+        this.completePic = completePicUrl;
+        this.completeFile = completeFileUrl;
+        this.completeLink = link;
+        this.note = note;
+    }
 }
