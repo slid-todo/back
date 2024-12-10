@@ -22,7 +22,7 @@ public class GoalController {
 
     private final GoalService goalService;
 
-    @Operation(summary = "목표 조회", description = "유저의 모든 목표 조호")
+    @Operation(summary = "목표 조회", description = "유저의 모든 목표 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "조회 성공")
     })
