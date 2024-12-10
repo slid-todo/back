@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -39,6 +41,9 @@ public class Todo {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "goal_id", nullable = false)
     private Goal goal;
+
+    @OneToMany(mappedBy = "todo", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Complete> completes = new ArrayList<>();
 
     @Builder
     public Todo(int todoId, String todoTitle, LocalDate startDate, LocalDate endDate, Boolean todoStatus, LocalDateTime createdAt, String todoLink, String todoPic, Goal goal) {
