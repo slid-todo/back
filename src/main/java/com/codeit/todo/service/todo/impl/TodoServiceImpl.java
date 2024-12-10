@@ -11,14 +11,15 @@ import com.codeit.todo.web.dto.request.todo.CreateTodoRequest;
 import com.codeit.todo.web.dto.request.todo.ReadTodoRequest;
 import com.codeit.todo.web.dto.request.todo.ReadTodoWithGoalRequest;
 import com.codeit.todo.web.dto.response.todo.CreateTodoResponse;
+import com.codeit.todo.web.dto.response.todo.ReadTodoWithGoalResponse;
 import com.codeit.todo.web.dto.response.todo.ReadTodosResponse;
 import com.codeit.todo.web.dto.response.todo.ReadTodosWithGoalsResponse;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -79,7 +80,7 @@ public class TodoServiceImpl implements TodoService {
             uploadUrl = storageService.uploadFile(request.imageEncodedBase64(), request.imageName());
         }
 
-        Goal goal = goalRepository.findById(request.goalId())
+        Goal goal = goalRepository.findByGoalIdAndUser_UserId(request.goalId(), userId)
                 .orElseThrow(() -> new EntityNotFoundException(String.valueOf(request.goalId()), "goal"));
         Todo todo = request.toEntity(uploadUrl, goal);
         Todo savedTodo = todoRepository.save(todo);
@@ -89,7 +90,7 @@ public class TodoServiceImpl implements TodoService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<ReadTodosWithGoalsResponse> findTodoListWithGoals(int userId, @Valid ReadTodoWithGoalRequest request) {
+    public List<ReadTodosWithGoalsResponse> findTodoListWithGoals(int userId, ReadTodoWithGoalRequest request) {
         List<Goal> goals = goalRepository.findByUser_UserId(userId);
 
         return goals.stream()
@@ -118,5 +119,33 @@ public class TodoServiceImpl implements TodoService {
 
                 })
                 .toList();
+    }
+
+    @Override
+    public Slice<ReadTodoWithGoalResponse> findTodoListWithGoal(int userId, int goalId, ReadTodoWithGoalRequest request) {
+        Slice<Todo> todos;
+        Pageable pageable = PageRequest.of(0, request.size());
+
+        if (Objects.isNull(request.lastTodoId()) || request.lastTodoId() <= 0) {
+            todos = todoRepository.findByGoal_GoalIdOrderByTodoIdDesc(goalId, pageable);
+        } else {
+            todos = todoRepository.findByGoal_GoalIdAndTodoIdLessThanOrderByTodoIdDesc(goalId, request.lastTodoId(), pageable);
+        }
+
+        List<ReadTodoWithGoalResponse> responses = todos.stream().map(
+                todo -> new ReadTodoWithGoalResponse(
+                        todo.getTodoId(),
+                        todo.getTodoTitle(),
+                        todo.getStartDate(),
+                        todo.getEndDate(),
+                        todo.getTodoStatus(),
+                        todo.getTodoLink(),
+                        todo.getTodoPic(),
+                        todo.getCreatedAt(),
+                        todo.getGoal().getGoalId()
+                )
+        ).toList();
+
+        return new SliceImpl<>(responses, pageable, todos.hasNext());
     }
 }
