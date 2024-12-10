@@ -39,7 +39,7 @@ public class GoalController {
             @ApiResponse(responseCode = "200", description = "목표 생성 성공")
     })
     @PostMapping
-    public Response<CreateGoalResponse> createTodo(
+    public Response<CreateGoalResponse> createGoal(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @Valid @RequestBody CreateGoalRequest request
     ) {
