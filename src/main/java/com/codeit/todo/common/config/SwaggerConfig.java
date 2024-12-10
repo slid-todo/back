@@ -18,12 +18,15 @@ public class SwaggerConfig {
     public OpenAPI springShopOpenAPI() {
         return new OpenAPI()
                 .components(new Components()
-                        .addSecuritySchemes("bearerAuth",
-                                new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT"))
+                        .addSecuritySchemes("token",
+                                new SecurityScheme()
+                                        .type(SecurityScheme.Type.APIKEY)
+                                        .in(SecurityScheme.In.HEADER)
+                                        .name("token"))
                         .addParameters("size", new Parameter().in("query").name("size").description("페이지 크기").required(false))
                         .addParameters("sort", new Parameter().in("query").name("sort").description("정렬 기준").required(false))
                 )
-                .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
+                .addSecurityItem(new SecurityRequirement().addList("token")) // 위에서 설정한 "token" 헤더 사용
                 .info(new Info()
                         .title("slid-todo 백엔드 API 명세서")
                         .description("slid-todo 백엔드 API 명세서 입니다.")

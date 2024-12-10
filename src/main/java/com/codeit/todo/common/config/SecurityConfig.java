@@ -29,8 +29,7 @@ public class SecurityConfig {
                     .requestMatchers("/login").permitAll()
                     .requestMatchers("/swagger/**").permitAll()
                     .requestMatchers("/**").permitAll()
-                    .anyRequest().permitAll()
-//                        .anyRequest().authenticated()
+                        .anyRequest().authenticated()
             )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
         return http.build();

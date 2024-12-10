@@ -1,5 +1,6 @@
 package com.codeit.todo.web.controller;
 
+import com.codeit.todo.repository.CustomUserDetails;
 import com.codeit.todo.service.todo.TodoService;
 import com.codeit.todo.web.dto.request.todo.CreateTodoRequest;
 import com.codeit.todo.web.dto.request.todo.ReadTodoRequest;
@@ -15,6 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,9 +37,10 @@ public class TodoController {
     })
     @GetMapping
     public Response<Slice<ReadTodosResponse>> getTodoList(
-            @Valid @ModelAttribute ReadTodoRequest request
-    ) {
-        int userId = 1;
+            @Valid @ModelAttribute ReadTodoRequest request,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+            ) {
+        int userId = userDetails.getUserId();
         return Response.ok(todoService.findTodoList(userId, request));
     }
 
@@ -50,9 +53,10 @@ public class TodoController {
     })
     @GetMapping("/goals")
     public Response<List<ReadTodosWithGoalsResponse>> getTodoWithGoalList(
-            @Valid @ModelAttribute ReadTodoWithGoalRequest request
+            @Valid @ModelAttribute ReadTodoWithGoalRequest request,
+            @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        int userId = 1;
+        int userId = userDetails.getUserId();
         return Response.ok(todoService.findTodoListWithGoals(userId, request));
     }
 
@@ -66,9 +70,10 @@ public class TodoController {
     @GetMapping("/goals/{goalId}")
     public Response<Slice<ReadTodoWithGoalResponse>> getTodoWithGoal(
             @PathVariable int goalId,
-            @Valid @ModelAttribute ReadTodoWithGoalRequest request
+            @Valid @ModelAttribute ReadTodoWithGoalRequest request,
+            @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        int userId = 1;
+        int userId = userDetails.getUserId();
         return Response.ok(todoService.findTodoListWithGoal(userId, goalId, request));
     }
 
@@ -81,9 +86,10 @@ public class TodoController {
     })
     @PostMapping
     public Response<CreateTodoResponse> createTodo(
-            @Valid @RequestBody CreateTodoRequest request
+            @Valid @RequestBody CreateTodoRequest request,
+            @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        int userId = 1;
+        int userId = userDetails.getUserId();
         return Response.ok(todoService.saveTodo(userId, request));
     }
 
