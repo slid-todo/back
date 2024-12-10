@@ -31,6 +31,7 @@ public class GoalServiceImpl implements GoalService {
         return goals.stream()
                 .map(goal-> {
                             return ReadGoalsResponse.builder()
+                                    .goalId(goal.getGoalId())
                                     .goalTitle(goal.getGoalTitle())
                                     .color(goal.getColor())
                                     .createdAt(goal.getCreatedAt())
