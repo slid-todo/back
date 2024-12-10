@@ -94,7 +94,7 @@ public class TodoServiceImpl implements TodoService {
         List<Complete> completes = new ArrayList<>();
         long completeDate = ChronoUnit.DAYS.between(request.startDate(), request.endDate());
 
-        for (long i = 0; i < completeDate; i++) {
+        for (long i = 0; i <= completeDate; i++) {
             LocalDate date = request.startDate().plusDays(i);
 
             Complete complete = Complete.builder()
