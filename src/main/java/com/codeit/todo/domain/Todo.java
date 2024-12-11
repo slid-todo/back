@@ -30,7 +30,7 @@ public class Todo {
     private LocalDate endDate;
 
     @Column(length = 50, nullable = false)
-    private Boolean todoStatus;
+    private String todoStatus;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
@@ -46,7 +46,7 @@ public class Todo {
     private List<Complete> completes = new ArrayList<>();
 
     @Builder
-    public Todo(int todoId, String todoTitle, LocalDate startDate, LocalDate endDate, Boolean todoStatus, LocalDateTime createdAt, String todoLink, String todoPic, Goal goal) {
+    public Todo(int todoId, String todoTitle, LocalDate startDate, LocalDate endDate, String todoStatus, LocalDateTime createdAt, String todoLink, String todoPic, Goal goal) {
         this.todoId = todoId;
         this.todoTitle = todoTitle;
         this.startDate = startDate;
