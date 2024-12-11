@@ -5,6 +5,7 @@ import com.codeit.todo.service.goal.GoalService;
 import com.codeit.todo.web.dto.request.goal.CreateGoalRequest;
 import com.codeit.todo.web.dto.request.goal.UpdateGoalRequest;
 import com.codeit.todo.web.dto.response.Response;
+import com.codeit.todo.web.dto.response.goal.DeleteGoalResponse;
 import com.codeit.todo.web.dto.response.goal.CreateGoalResponse;
 import com.codeit.todo.web.dto.response.goal.ReadGoalsResponse;
 import com.codeit.todo.web.dto.response.goal.UpdateGoalResponse;
@@ -66,4 +67,20 @@ public class GoalController {
         int userId= customUserDetails.getUserId();
         return Response.ok(goalService.updateGoal(userId, goalId, request));
     }
+
+    @Transactional
+    @Operation(summary = "목표 삭제",
+            description = "목표 삭제 API, 삭제된 목표의 ID 반환")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "목표 삭제 성공")
+    })
+    @DeleteMapping ("/{goalId}")
+    public Response<DeleteGoalResponse> deleteGoal(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @PathVariable int goalId
+    ) {
+        int userId= customUserDetails.getUserId();
+        return Response.ok(goalService.deleteGoal(userId, goalId));
+    }
+
 }

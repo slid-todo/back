@@ -1,5 +1,6 @@
 package com.codeit.todo.service.goal;
 
+import com.codeit.todo.web.dto.response.goal.DeleteGoalResponse;
 import com.codeit.todo.web.dto.request.goal.UpdateGoalRequest;
 import com.codeit.todo.web.dto.request.goal.CreateGoalRequest;
 import com.codeit.todo.web.dto.response.goal.CreateGoalResponse;
@@ -15,4 +16,8 @@ public interface GoalService {
     CreateGoalResponse saveGoal(int userId, CreateGoalRequest request);
 
     UpdateGoalResponse updateGoal(int userId, int goalId, UpdateGoalRequest request);
+
+    DeleteGoalResponse deleteGoal(int userId, int goalId);
+
+
 }
