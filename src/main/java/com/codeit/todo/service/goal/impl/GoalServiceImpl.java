@@ -35,7 +35,7 @@ public class GoalServiceImpl implements GoalService {
         List<Goal> goals= goalRepository.findByUser_UserId(userId);
 
         if (goals.isEmpty()) {
-            throw new GoalNotFoundException("0", "Goal");
+            throw new GoalNotFoundException("0");
         }
 
         return goals.stream()
@@ -70,7 +70,7 @@ public class GoalServiceImpl implements GoalService {
     @Override
     public UpdateGoalResponse updateGoal(int userId, int goalId, UpdateGoalRequest request) {
         Goal goal = goalRepository.findByGoalIdAndUser_UserId(goalId, userId)
-                .orElseThrow(()-> new GoalNotFoundException(String.valueOf(goalId), "Goal"));
+                .orElseThrow(()-> new GoalNotFoundException(String.valueOf(goalId)));
 
         goal.update(request.title());
         return new UpdateGoalResponse(goalId);
