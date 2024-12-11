@@ -31,6 +31,10 @@ public class Goal {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    public void update(String title) {
+        this.goalTitle = title;
+    }
+
     @Builder
     public Goal(int goalId, String goalTitle, String color, LocalDateTime createdAt, User user) {
         this.goalId = goalId;

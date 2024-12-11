@@ -8,9 +8,11 @@ import com.codeit.todo.domain.User;
 import com.codeit.todo.repository.GoalRepository;
 import com.codeit.todo.repository.UserRepository;
 import com.codeit.todo.service.goal.GoalService;
+import com.codeit.todo.web.dto.request.goal.UpdateGoalRequest;
 import com.codeit.todo.web.dto.request.goal.CreateGoalRequest;
 import com.codeit.todo.web.dto.response.goal.CreateGoalResponse;
 import com.codeit.todo.web.dto.response.goal.ReadGoalsResponse;
+import com.codeit.todo.web.dto.response.goal.UpdateGoalResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +35,7 @@ public class GoalServiceImpl implements GoalService {
         List<Goal> goals= goalRepository.findByUser_UserId(userId);
 
         if (goals.isEmpty()) {
-            throw new GoalNotFoundException("goalId", "Goal");
+            throw new GoalNotFoundException("0");
         }
 
         return goals.stream()
@@ -63,5 +65,14 @@ public class GoalServiceImpl implements GoalService {
         Goal savedGoal = goalRepository.save(goal);
 
         return CreateGoalResponse.fromEntity(savedGoal);
+    }
+
+    @Override
+    public UpdateGoalResponse updateGoal(int userId, int goalId, UpdateGoalRequest request) {
+        Goal goal = goalRepository.findByGoalIdAndUser_UserId(goalId, userId)
+                .orElseThrow(()-> new GoalNotFoundException(String.valueOf(goalId)));
+
+        goal.update(request.title());
+        return new UpdateGoalResponse(goalId);
     }
 }
