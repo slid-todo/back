@@ -1,6 +1,5 @@
 package com.codeit.todo.service.goal;
 
-import com.codeit.todo.repository.CustomUserDetails;
 import com.codeit.todo.web.dto.request.goal.UpdateGoalRequest;
 import com.codeit.todo.web.dto.request.goal.CreateGoalRequest;
 import com.codeit.todo.web.dto.response.goal.CreateGoalResponse;
