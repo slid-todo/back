@@ -13,7 +13,7 @@ public record ReadTodosResponse(
         String todoTitle,
         LocalDate startDate,
         LocalDate endDate,
-        Boolean todoStatus,
+        String todoStatus,
         String todoLink,
         String todoPic,
         LocalDateTime createdAt,

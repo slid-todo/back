@@ -27,7 +27,7 @@ public record CreateTodoRequest(
                         .endDate(this.endDate)
                         .todoLink(this.todoLink)
                         .todoPic(uploadUrl)
-                        .todoStatus(false)
+                        .todoStatus("진행")
                         .createdAt(LocalDateTime.now())
                         .goal(goal)
                         .build();
