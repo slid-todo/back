@@ -13,6 +13,7 @@ import com.codeit.todo.web.dto.response.goal.CreateGoalResponse;
 import com.codeit.todo.web.dto.response.goal.ReadGoalsResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Random;
@@ -47,6 +48,7 @@ public class GoalServiceImpl implements GoalService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     @Override
     public CreateGoalResponse saveGoal(int userId, CreateGoalRequest request) {
         String[] colors= {"orange", "pink", "purple", "blue", "red"};
