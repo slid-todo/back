@@ -1,6 +1,6 @@
 package com.codeit.todo.service.todo.impl;
 
-import com.codeit.todo.common.exception.EntityNotFoundException;
+import com.codeit.todo.common.exception.goal.GoalNotFoundException;
 import com.codeit.todo.domain.Complete;
 import com.codeit.todo.domain.Goal;
 import com.codeit.todo.domain.Todo;
@@ -104,7 +104,7 @@ public class TodoServiceImpl implements TodoService {
         }
 
         Goal goal = goalRepository.findByGoalIdAndUser_UserId(request.goalId(), userId)
-                .orElseThrow(() -> new EntityNotFoundException(String.valueOf(request.goalId()), "goal"));
+                .orElseThrow(() -> new GoalNotFoundException(String.valueOf(request.goalId())));
         Todo todo = request.toEntity(uploadUrl, goal);
         Todo savedTodo = todoRepository.save(todo);
 
