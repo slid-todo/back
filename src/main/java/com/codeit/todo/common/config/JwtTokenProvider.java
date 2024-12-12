@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
@@ -66,7 +67,16 @@ public class JwtTokenProvider {
 
 
     public String resolveToken(HttpServletRequest request){
-        return request.getHeader("token");
+        String token = null;
+
+        if(request.getCookies() != null){
+            for(Cookie cookie : request.getCookies()){
+                if(cookie.getName().equals("token")) {
+                    token = cookie.getValue();
+                }
+            }
+        }
+        return token;
     }
 
     public boolean validToken(String jwtToken){
