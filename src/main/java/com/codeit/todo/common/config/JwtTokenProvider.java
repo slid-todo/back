@@ -1,8 +1,8 @@
 package com.codeit.todo.common.config;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import com.codeit.todo.common.exception.jwt.JwtException;
+import com.codeit.todo.common.exception.payload.ErrorStatus;
+import io.jsonwebtoken.*;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +20,9 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class JwtTokenProvider {
 
+    private static final int UNAUTHORIZED = 401;
+    private static final long TOKEN_VALID_MILLI_SECONDS =1000L*60*60; //1시간
+
     @Value("${jwtpassword.source}")
     private String secretKeySource;
     private String secretKey;
@@ -30,8 +33,6 @@ public class JwtTokenProvider {
                 .encodeToString(secretKeySource.getBytes());
     }
 
-    private long tokenValidMilliSeconds =1000L*60*60; //1시간
-
     private final UserDetailsService userDetailsService;
 
     public String createToken(String email){
@@ -40,7 +41,7 @@ public class JwtTokenProvider {
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime()+tokenValidMilliSeconds))
+                .setExpiration(new Date(now.getTime()+ TOKEN_VALID_MILLI_SECONDS))
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
@@ -57,8 +58,16 @@ public class JwtTokenProvider {
                     .getBody();
             Date now = new Date();
             return claims.getExpiration().after(now);
-        }catch(Exception e){
-            return false;
+        } catch (ExpiredJwtException e) {
+            throw new JwtException(ErrorStatus.toErrorStatus("JWT 토큰이 만료되었습니다.", UNAUTHORIZED));
+        } catch (SignatureException e) {
+            throw new JwtException(ErrorStatus.toErrorStatus("JWT 토큰의 서명이 유효하지 않습니다. 시크릿 키가 변경되었을 수 있습니다.", UNAUTHORIZED));
+        } catch (MalformedJwtException e) {
+            throw new JwtException(ErrorStatus.toErrorStatus("잘못된 JWT 형식입니다.", UNAUTHORIZED));
+        } catch (UnsupportedJwtException e) {
+            throw new JwtException(ErrorStatus.toErrorStatus("지원되지 않는 JWT 타입입니다.", UNAUTHORIZED));
+        } catch (Exception e) {
+            throw new JwtException(ErrorStatus.toErrorStatus("JWT 토큰이 유효하지 않습니다.", UNAUTHORIZED));
         }
     }
 
