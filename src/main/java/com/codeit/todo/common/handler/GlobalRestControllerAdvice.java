@@ -2,7 +2,9 @@ package com.codeit.todo.common.handler;
 
 import com.codeit.todo.common.exception.ApplicationException;
 import com.codeit.todo.common.exception.payload.ErrorStatus;
+import jakarta.servlet.ServletException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +27,11 @@ public class GlobalRestControllerAdvice {
         ErrorStatus errorStatus = e.getErrorStatus();
 
         return new ResponseEntity<>(errorStatus, errorStatus.toHttpStatus());
+    }
+
+    @ExceptionHandler(ServletException.class)
+    public ResponseEntity<String> handleServletException(ServletException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED); // 401 상태 코드
     }
 
 }
