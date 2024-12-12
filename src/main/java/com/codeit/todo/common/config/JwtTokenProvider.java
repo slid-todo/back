@@ -24,7 +24,6 @@ public class JwtTokenProvider {
 
     private static final int UNAUTHORIZED = 401;
     private static final long TOKEN_VALID_MILLI_SECONDS =1000L*60*60; //1시간
-
     private static final int COOKIE_VALID_SECONDS = 60*60*24; //24시간
 
 
