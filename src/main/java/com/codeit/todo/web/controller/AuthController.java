@@ -33,13 +33,6 @@ public class AuthController {
         Cookie cookie = jwtTokenProvider.createCookie(loginRequest.email());
         httpServletResponse.addCookie(cookie);
         return Response.ok( "로그인 성공");
-
-//        if(token != null){
-//
-//        }else{
-//            return Response.ok("로그인 실패");
-//        }
-
     }
 
 }

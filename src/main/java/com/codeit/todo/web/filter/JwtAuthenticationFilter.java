@@ -7,7 +7,6 @@ import com.codeit.todo.common.exception.payload.ErrorStatus;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +33,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             if (jwtToken == null) {
                 throw new JwtException(ErrorStatus.toErrorStatus(
-                        "요청 헤더에 JWT 토큰이 비어있습니다.", 401
+                        "쿠키의 JWT 토큰이 비어있습니다.", 401
                 ));
             }
 
