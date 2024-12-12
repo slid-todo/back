@@ -3,6 +3,7 @@ package com.codeit.todo.common.config;
 import com.codeit.todo.common.exception.CustomAccessDeniedHandler;
 import com.codeit.todo.common.exception.CustomAuthenticationEntryPoint;
 import com.codeit.todo.web.filter.JwtAuthenticationFilter;
+import com.codeit.todo.web.filter.JwtExceptionFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +19,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final JwtExceptionFilter jwtExceptionFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -31,7 +34,8 @@ public class SecurityConfig {
                     .requestMatchers("/**").permitAll()
                         .anyRequest().authenticated()
             )
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class);
         return http.build();
     }
 
