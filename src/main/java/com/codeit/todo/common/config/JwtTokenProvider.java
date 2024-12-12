@@ -4,11 +4,13 @@ import com.codeit.todo.common.exception.jwt.JwtException;
 import com.codeit.todo.common.exception.payload.ErrorStatus;
 import io.jsonwebtoken.*;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
@@ -22,6 +24,10 @@ public class JwtTokenProvider {
 
     private static final int UNAUTHORIZED = 401;
     private static final long TOKEN_VALID_MILLI_SECONDS =1000L*60*60; //1시간
+
+    private static final int COOKIE_VALID_SECONDS = 60*60*24; //24시간
+
+
 
     @Value("${jwtpassword.source}")
     private String secretKeySource;
@@ -46,8 +52,31 @@ public class JwtTokenProvider {
                 .compact();
     }
 
+    public Cookie createCookie(String email){
+        String cookieName = "token";
+        String cookieValue= createToken(email);
+
+        Cookie cookie = new Cookie(cookieName, cookieValue);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(COOKIE_VALID_SECONDS);
+
+        return cookie;
+    }
+
+
     public String resolveToken(HttpServletRequest request){
-        return request.getHeader("token");
+        String token = null;
+
+        if(request.getCookies() != null){
+            for(Cookie cookie : request.getCookies()){
+                if(cookie.getName().equals("token")) {
+                    token = cookie.getValue();
+                }
+            }
+        }
+        return token;
     }
 
     public boolean validToken(String jwtToken){
