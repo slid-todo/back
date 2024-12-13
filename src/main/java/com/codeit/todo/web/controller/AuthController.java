@@ -46,7 +46,7 @@ public class AuthController {
         httpServletResponse.addCookie(cookie);
 
         httpServletResponse.addHeader("Set-Cookie",
-            String.format("%s=%s; Path=%s; Max-Age=%d; SameSite=None; HttpOnly",
+            String.format("%s=%s; Path=%s; Max-Age=%d; SameSite=None;",
                 cookie.getName(),
                 cookie.getValue(),
                 cookie.getPath(),
