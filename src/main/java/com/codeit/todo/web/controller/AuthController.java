@@ -11,6 +11,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseCookie;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,20 +42,21 @@ public class AuthController {
             @ApiResponse(responseCode = "200", description = "로그인 성공")
     })
     @PostMapping(value = "/login")
-    public Response login(@RequestBody LoginRequest loginRequest, HttpServletResponse httpServletResponse){
+    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest, HttpServletResponse httpServletResponse){
         userService.login(loginRequest);
         Cookie cookie = jwtTokenProvider.createCookie(loginRequest.email());
+        httpServletResponse.addCookie(cookie);
 
-        httpServletResponse.addHeader("Set-Cookie",
-            String.format("%s=%s; Path=%s; Max-Age=%d; SameSite=None;",
-                cookie.getName(),
-                cookie.getValue(),
-                cookie.getPath(),
-                cookie.getMaxAge()
-            )
-        );
+        ResponseCookie responseCookie = ResponseCookie.from("token", cookie.getValue())
+            .secure(false)
+            .path("/")
+            .maxAge(cookie.getMaxAge())
+            .sameSite("None")
+            .build();
 
-        return Response.ok( "로그인 성공");
+        httpServletResponse.addHeader("Set-Cookie", responseCookie.toString());
+
+        return ResponseEntity.ok( "로그인 성공");
     }
 
 }
