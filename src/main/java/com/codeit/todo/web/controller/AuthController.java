@@ -44,6 +44,7 @@ public class AuthController {
     @PostMapping(value = "/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest, HttpServletResponse httpServletResponse){
         String token = userService.login(loginRequest);
+        httpServletResponse.addHeader("Access-Control-Expose-Headers", "token");
         httpServletResponse.setHeader("token", token);
 
         Cookie cookie = jwtTokenProvider.createCookie(loginRequest.email());
