@@ -33,7 +33,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             if (jwtToken == null) {
                 throw new JwtException(ErrorStatus.toErrorStatus(
-                        "쿠키의 JWT 토큰이 비어있습니다.", 401
+                        "헤더의 JWT 토큰이 비어있습니다.", 401
                 ));
             }
 
