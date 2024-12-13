@@ -45,16 +45,7 @@ public class AuthController {
     public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest, HttpServletResponse httpServletResponse){
         userService.login(loginRequest);
         Cookie cookie = jwtTokenProvider.createCookie(loginRequest.email());
-
-        ResponseCookie responseCookie = ResponseCookie.from("token", cookie.getValue())
-            .secure(false)
-            .path("/")
-            .httpOnly(true)
-            .maxAge(cookie.getMaxAge())
-            .sameSite("None")
-            .build();
-
-        httpServletResponse.addHeader("Set-Cookie", responseCookie.toString());
+        httpServletResponse.addCookie(cookie);
 
         return ResponseEntity.ok( "로그인 성공");
     }
