@@ -45,11 +45,11 @@ public class AuthController {
     public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest, HttpServletResponse httpServletResponse){
         userService.login(loginRequest);
         Cookie cookie = jwtTokenProvider.createCookie(loginRequest.email());
-        httpServletResponse.addCookie(cookie);
 
         ResponseCookie responseCookie = ResponseCookie.from("token", cookie.getValue())
             .secure(false)
             .path("/")
+            .httpOnly(true)
             .maxAge(cookie.getMaxAge())
             .sameSite("None")
             .build();
