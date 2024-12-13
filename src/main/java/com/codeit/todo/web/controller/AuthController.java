@@ -44,6 +44,16 @@ public class AuthController {
         userService.login(loginRequest);
         Cookie cookie = jwtTokenProvider.createCookie(loginRequest.email());
         httpServletResponse.addCookie(cookie);
+
+        httpServletResponse.addHeader("Set-Cookie",
+            String.format("%s=%s; Path=%s; Max-Age=%d; SameSite=None; HttpOnly",
+                cookie.getName(),
+                cookie.getValue(),
+                cookie.getPath(),
+                cookie.getMaxAge()
+            )
+        );
+
         return Response.ok( "로그인 성공");
     }
 
