@@ -43,7 +43,6 @@ public class AuthController {
     public Response login(@RequestBody LoginRequest loginRequest, HttpServletResponse httpServletResponse){
         userService.login(loginRequest);
         Cookie cookie = jwtTokenProvider.createCookie(loginRequest.email());
-        httpServletResponse.addCookie(cookie);
 
         httpServletResponse.addHeader("Set-Cookie",
             String.format("%s=%s; Path=%s; Max-Age=%d; SameSite=None;",
