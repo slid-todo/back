@@ -37,15 +37,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 ));
             }
 
+            log.info("토큰이 인식되었습니다. : {}", jwtToken);
             if (jwtTokenProvider.validToken(jwtToken)) {
+                log.info("토큰이 유효합니다. : {}", jwtToken);
                 Authentication auth = jwtTokenProvider.getAuthentication(jwtToken);
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
         } catch (ApplicationException e) {
+            log.info("토큰 에러 발생 : {}", jwtToken);
             processExceptionHandle(response, e.getErrorStatus());
             return;
             }
 
+        log.info("필터를 통과합니다");
         filterChain.doFilter(request, response);
     }
 
