@@ -14,7 +14,7 @@ public class WebConfig implements WebMvcConfigurer {
                         "https://front-sooty-three.vercel.app",
                         "http://localhost:3000"
                         )
-                .allowedMethods("GET", "POST", "PUT", "DELETE")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true);
     }
