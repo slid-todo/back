@@ -15,6 +15,7 @@ import com.codeit.todo.web.dto.request.todo.ReadTodoWithGoalRequest;
 import com.codeit.todo.web.dto.response.complete.ReadCompleteResponse;
 import com.codeit.todo.web.dto.response.todo.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -221,6 +223,7 @@ public class TodoServiceImpl implements TodoService {
 
         double progress = totalTodos > 0 ? (double) completedTodo / totalTodos * 100 : 0;
 
+        log.info("할 일 진행상황 조회 성공 : {}", totalTodos);
         return ReadTodoProgressResponse.from(progress);
     }
 }
