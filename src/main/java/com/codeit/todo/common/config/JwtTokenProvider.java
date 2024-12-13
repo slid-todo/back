@@ -57,7 +57,7 @@ public class JwtTokenProvider {
 
         Cookie cookie = new Cookie(cookieName, cookieValue);
         cookie.setHttpOnly(true);
-        cookie.setSecure(true);
+        cookie.setSecure(false);
         cookie.setPath("/");
         cookie.setMaxAge(COOKIE_VALID_SECONDS);
 
