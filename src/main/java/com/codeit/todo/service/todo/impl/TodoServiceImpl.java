@@ -13,10 +13,7 @@ import com.codeit.todo.web.dto.request.todo.CreateTodoRequest;
 import com.codeit.todo.web.dto.request.todo.ReadTodoRequest;
 import com.codeit.todo.web.dto.request.todo.ReadTodoWithGoalRequest;
 import com.codeit.todo.web.dto.response.complete.ReadCompleteResponse;
-import com.codeit.todo.web.dto.response.todo.CreateTodoResponse;
-import com.codeit.todo.web.dto.response.todo.ReadTodoWithGoalResponse;
-import com.codeit.todo.web.dto.response.todo.ReadTodosResponse;
-import com.codeit.todo.web.dto.response.todo.ReadTodosWithGoalsResponse;
+import com.codeit.todo.web.dto.response.todo.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -177,6 +174,7 @@ public class TodoServiceImpl implements TodoService {
                 }).toList();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Slice<ReadTodoWithGoalResponse> findTodoListWithGoal(int userId, int goalId, ReadTodoWithGoalRequest request) {
         Slice<Todo> todos;
@@ -203,5 +201,26 @@ public class TodoServiceImpl implements TodoService {
         ).toList();
 
         return new SliceImpl<>(responses, pageable, todos.hasNext());
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public ReadTodoProgressResponse calculateTodoProgress(int userId) {
+        LocalDate today = LocalDate.now();
+        List<Goal> goals = goalRepository.findByUser_UserId(userId);
+        List<Integer> goalIds = goals.stream()
+                .map(Goal::getGoalId)
+                .toList();
+
+        List<Todo> todos = todoRepository.findByGoal_GoalIdInAndStartDate(goalIds, today);
+
+        int totalTodos = todos.size();
+        long completedTodo = todos.stream()
+                .filter(todo -> todo.getTodoStatus().equals("인증"))
+                .count();
+
+        double progress = totalTodos > 0 ? (double) completedTodo / totalTodos * 100 : 0;
+
+        return ReadTodoProgressResponse.from(progress);
     }
 }
