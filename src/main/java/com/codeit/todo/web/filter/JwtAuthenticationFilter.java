@@ -44,7 +44,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
         } catch (ApplicationException e) {
-            log.info("토큰 에러 발생 : {}", jwtToken);
+            log.info("토큰 에러 발생 : {} {}", jwtToken, e.getErrorStatus().message());
             processExceptionHandle(response, e.getErrorStatus());
             return;
             }
