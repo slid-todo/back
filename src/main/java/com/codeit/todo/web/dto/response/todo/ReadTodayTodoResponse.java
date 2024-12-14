@@ -7,12 +7,12 @@ import lombok.Builder;
 import java.util.List;
 
 @Builder
-public record ReadTodayTodoResponse(int todoId, String todoTitle, List<ReadCompleteResponse> complete) {
-    public static ReadTodayTodoResponse from(Todo todo, List<ReadCompleteResponse> todayCompletes) {
+public record ReadTodayTodoResponse(int todoId, String todoTitle, ReadCompleteResponse complete) {
+    public static ReadTodayTodoResponse from(Todo todo, ReadCompleteResponse todayComplete) {
         return ReadTodayTodoResponse.builder()
                 .todoId(todo.getTodoId())
                 .todoTitle(todo.getTodoTitle())
-                .complete(todayCompletes)
+                .complete(todayComplete)
                 .build();
     }
 }

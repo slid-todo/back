@@ -176,12 +176,13 @@ public class TodoServiceImpl implements TodoService {
 
         return todos.stream()
                 .map(todo -> {
-                    List<ReadCompleteResponse> todayCompletes = todo.getCompletes().stream()
+                    ReadCompleteResponse todayComplete = todo.getCompletes().stream()
                             .filter(complete -> today.equals(complete.getStartDate()))
                             .map(ReadCompleteResponse::from)
-                            .toList();
+                            .findFirst()
+                            .orElse(null);
 
-                    return ReadTodayTodoResponse.from(todo, todayCompletes);
+                    return ReadTodayTodoResponse.from(todo, todayComplete);
 
                 }).toList();
     }
