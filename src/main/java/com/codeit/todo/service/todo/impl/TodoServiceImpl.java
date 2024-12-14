@@ -65,35 +65,9 @@ public class TodoServiceImpl implements TodoService {
             );
         }
 
-        List<ReadTodosResponse> responseList = todos.getContent().stream()
-                .map(todo -> {
-                    List<Complete> completes = completeRepository.findByTodo_TodoId(todo.getTodoId());
+        List<ReadTodosResponse> responses = getTodoResponses(todos);
 
-                    List<ReadCompleteResponse> completeResponses = completes.stream().map(
-                            complete -> ReadCompleteResponse.builder()
-                                    .completeId(complete.getCompleteId())
-                                    .note(complete.getNote())
-                                    .completeLink(complete.getCompleteLink())
-                                    .completePic(complete.getCompletePic())
-                                    .createdAt(complete.getCreatedAt())
-                                    .completedDate(complete.getStartDate())
-                                    .build()
-                    ).toList();
-
-                    return ReadTodosResponse.builder()
-                            .todoId(todo.getTodoId())
-                            .todoLink(todo.getTodoLink())
-                            .todoStatus(todo.getTodoStatus())
-                            .todoTitle(todo.getTodoTitle())
-                            .startDate(todo.getStartDate())
-                            .endDate(todo.getEndDate())
-                            .todoPic(todo.getTodoPic())
-                            .createdAt(todo.getCreatedAt())
-                            .completes(completeResponses)
-                            .build();
-                }).toList();
-
-        return new SliceImpl<>(responseList, pageable, todos.hasNext());
+        return new SliceImpl<>(responses, pageable, todos.hasNext());
     }
 
     @Override
@@ -139,33 +113,7 @@ public class TodoServiceImpl implements TodoService {
                     Pageable pageable = PageRequest.of(0, request.size());
                     Slice<Todo> todos = todoRepository.findByGoal_GoalIdOrderByTodoIdDesc(goal.getGoalId(), pageable);
 
-                    List<ReadTodosResponse> responses = todos.getContent().stream()
-                            .map(todo -> {
-                                List<Complete> completes = completeRepository.findByTodo_TodoId(todo.getTodoId());
-
-                                List<ReadCompleteResponse> completeResponses = completes.stream().map(
-                                        complete -> ReadCompleteResponse.builder()
-                                                .completeId(complete.getCompleteId())
-                                                .note(complete.getNote())
-                                                .completeLink(complete.getCompleteLink())
-                                                .completePic(complete.getCompletePic())
-                                                .createdAt(complete.getCreatedAt())
-                                                .completedDate(complete.getStartDate())
-                                                .build()
-                                ).toList();
-
-                                return ReadTodosResponse.builder()
-                                        .todoId(todo.getTodoId())
-                                        .todoLink(todo.getTodoLink())
-                                        .todoStatus(todo.getTodoStatus())
-                                        .todoTitle(todo.getTodoTitle())
-                                        .startDate(todo.getStartDate())
-                                        .endDate(todo.getEndDate())
-                                        .todoPic(todo.getTodoPic())
-                                        .createdAt(todo.getCreatedAt())
-                                        .completes(completeResponses)
-                                        .build();
-                                    }).toList();
+                    List<ReadTodosResponse> responses = getTodoResponses(todos);
 
                     return new ReadTodosWithGoalsResponse(
                             goal.getGoalId(),
@@ -189,17 +137,7 @@ public class TodoServiceImpl implements TodoService {
         }
 
         List<ReadTodoWithGoalResponse> responses = todos.stream().map(
-                todo -> new ReadTodoWithGoalResponse(
-                        todo.getTodoId(),
-                        todo.getTodoTitle(),
-                        todo.getStartDate(),
-                        todo.getEndDate(),
-                        todo.getTodoStatus(),
-                        todo.getTodoLink(),
-                        todo.getTodoPic(),
-                        todo.getCreatedAt(),
-                        todo.getGoal().getGoalId()
-                )
+                ReadTodoWithGoalResponse::from
         ).toList();
 
         return new SliceImpl<>(responses, pageable, todos.hasNext());
@@ -209,12 +147,7 @@ public class TodoServiceImpl implements TodoService {
     @Override
     public ReadTodoProgressResponse calculateTodoProgress(int userId) {
         LocalDate today = LocalDate.now();
-        List<Goal> goals = goalRepository.findByUser_UserId(userId);
-        List<Integer> goalIds = goals.stream()
-                .map(Goal::getGoalId)
-                .toList();
-
-        List<Todo> todos = todoRepository.findByGoal_GoalIdInAndStartDate(goalIds, today);
+        List<Todo> todos = getTodayTodos(today, userId);
 
         long totalCompletes = 0;
         long certifiedCompletes = 0;
@@ -233,5 +166,45 @@ public class TodoServiceImpl implements TodoService {
 
         log.info("할 일 진행상황 조회 성공 : {}", completeProgress);
         return ReadTodoProgressResponse.from(completeProgress);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<ReadTodayTodoResponse> findTodayTodo(int userId) {
+        LocalDate today = LocalDate.now();
+        List<Todo> todos = getTodayTodos(today, userId);
+
+        return todos.stream()
+                .map(todo -> {
+                    List<ReadCompleteResponse> todayCompletes = todo.getCompletes().stream()
+                            .filter(complete -> today.equals(complete.getStartDate()))
+                            .map(ReadCompleteResponse::from)
+                            .toList();
+
+                    return ReadTodayTodoResponse.from(todo, todayCompletes);
+
+                }).toList();
+    }
+
+    private List<Todo> getTodayTodos(LocalDate today, int userId) {
+        List<Goal> goals = goalRepository.findByUser_UserId(userId);
+        List<Integer> goalIds = goals.stream()
+                .map(Goal::getGoalId)
+                .toList();
+
+        return todoRepository.findByGoal_GoalIdInAndStartDate(goalIds, today);
+    }
+
+    private List<ReadTodosResponse> getTodoResponses(Slice<Todo> todos) {
+        return todos.getContent().stream()
+                .map(todo -> {
+                    List<Complete> completes = completeRepository.findByTodo_TodoId(todo.getTodoId());
+
+                    List<ReadCompleteResponse> completeResponses = completes.stream().map(
+                                    ReadCompleteResponse::from)
+                            .toList();
+
+                    return ReadTodosResponse.from(todo, completeResponses);
+                }).toList();
     }
 }
