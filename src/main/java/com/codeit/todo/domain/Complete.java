@@ -28,7 +28,6 @@ public class Complete {
     private String note;
 
     private String completeLink;
-    private String completeFile;
     private String completePic;
     @Column(nullable = false)
     private String completeStatus;
@@ -43,18 +42,16 @@ public class Complete {
         this.createdAt = createdAt;
         this.note = note;
         this.completeLink = completeLink;
-        this.completeFile = completeFile;
         this.completePic = completePic;
         this.completeStatus = completeStatus;
         this.todo = todo;
     }
 
-    public void update(String completePicUrl, String completeFileUrl, String link, String note) {
+    public void update(String completePicUrl, String link, String note) {
         this.completePic = completePicUrl;
-        this.completeFile = completeFileUrl;
         this.completeLink = link;
         this.note = note;
-        if (Objects.nonNull(completePicUrl) && !completeFileUrl.isEmpty()) {
+        if (Objects.nonNull(completePicUrl) && !completePicUrl.isEmpty()) {
             this.completeStatus = "인증";
         }
     }

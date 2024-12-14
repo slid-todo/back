@@ -30,17 +30,12 @@ public class CompleteServiceImpl implements CompleteService {
                 .orElseThrow(() -> new CompleteNotFoundException(String.valueOf(completeId)));
 
         String completePicUrl = "";
-        String completeFileUrl = "";
 
         if (Objects.nonNull(request.completePicBase64()) && !request.completePicBase64().isEmpty()) {
             completePicUrl = storageService.uploadFile(request.completePicBase64(), request.completePicName());
         }
 
-        if (Objects.nonNull(request.completeFileBase64()) && !request.completeFileBase64().isEmpty()) {
-            completeFileUrl = storageService.uploadFile(request.completeFileBase64(), request.completeFileName());
-        }
-
-        complete.update(completePicUrl, completeFileUrl, request.completeLink(), request.note());
+        complete.update(completePicUrl, request.completeLink(), request.note());
 
         return new UpdateCompleteResponse(completeId);
     }
