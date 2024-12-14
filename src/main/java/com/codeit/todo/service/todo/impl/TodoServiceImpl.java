@@ -201,8 +201,8 @@ public class TodoServiceImpl implements TodoService {
         }
 
         String uploadPicUrl = "";
-        if (Objects.nonNull(request.todoPicBase64()) && !request.todoPicBase64().isEmpty()) {
-            storageService.uploadFile(request.todoPicBase64(), request.picName());
+        if (Objects.nonNull(request.imageEncodedBase64()) && !request.imageEncodedBase64().isEmpty()) {
+            uploadPicUrl = storageService.uploadFile(request.imageEncodedBase64(), request.imageName());
         }
 
         todo.update(request, uploadPicUrl);

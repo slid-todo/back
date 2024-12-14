@@ -8,7 +8,7 @@ public record UpdateTodoRequest(
         LocalDate endDate,
         String todoLink,
         String todoStatus,
-        String todoPicBase64,
-        String picName
+        String imageEncodedBase64,
+        String imageName
 ) {
 }
