@@ -36,6 +36,8 @@ import java.util.Objects;
 @Transactional
 public class TodoServiceImpl implements TodoService {
 
+    private static final String COMPLETE = "인증";
+
     private final TodoRepository todoRepository;
     private final GoalRepository goalRepository;
     private final CompleteRepository completeRepository;
@@ -75,7 +77,7 @@ public class TodoServiceImpl implements TodoService {
                                     .completeLink(complete.getCompleteLink())
                                     .completePic(complete.getCompletePic())
                                     .createdAt(complete.getCreatedAt())
-                                    .completedDate(complete.getCompletedDate())
+                                    .completedDate(complete.getStartDate())
                                     .build()
                     ).toList();
 
@@ -115,9 +117,9 @@ public class TodoServiceImpl implements TodoService {
 
             Complete complete = Complete.builder()
                     .todo(savedTodo)
-                    .completedDate(date)
+                    .startDate(date)
                     .createdAt(LocalDateTime.now())
-                    .completeStatus(false)
+                    .completeStatus("진행")
                     .build();
 
             completes.add(complete);
@@ -150,7 +152,7 @@ public class TodoServiceImpl implements TodoService {
                                                 .completeLink(complete.getCompleteLink())
                                                 .completePic(complete.getCompletePic())
                                                 .createdAt(complete.getCreatedAt())
-                                                .completedDate(complete.getCompletedDate())
+                                                .completedDate(complete.getStartDate())
                                                 .build()
                                 ).toList();
 
@@ -216,14 +218,22 @@ public class TodoServiceImpl implements TodoService {
 
         List<Todo> todos = todoRepository.findByGoal_GoalIdInAndStartDate(goalIds, today);
 
-        int totalTodos = todos.size();
-        long completedTodo = todos.stream()
-                .filter(todo -> todo.getTodoStatus().equals("인증"))
-                .count();
+        long totalCompletes = 0;
+        long certifiedCompletes = 0;
 
-        double progress = totalTodos > 0 ? (double) completedTodo / totalTodos * 100 : 0;
+        for (Todo todo : todos) {
+            totalCompletes += todo.getCompletes().stream()
+                    .filter(complete -> today.equals(complete.getStartDate()))
+                    .count();
 
-        log.info("할 일 진행상황 조회 성공 : {}", totalTodos);
-        return ReadTodoProgressResponse.from(progress);
+            certifiedCompletes += todo.getCompletes().stream()
+                    .filter(complete -> COMPLETE.equals(complete.getCompleteStatus()))
+                    .count();
+        }
+
+        double completeProgress = totalCompletes > 0 ? (double) certifiedCompletes / totalCompletes * 100 : 0;
+
+        log.info("할 일 진행상황 조회 성공 : {}", completeProgress);
+        return ReadTodoProgressResponse.from(completeProgress);
     }
 }
