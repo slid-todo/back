@@ -1,5 +1,6 @@
 package com.codeit.todo.domain;
 
+import com.codeit.todo.web.dto.request.todo.UpdateTodoRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -56,5 +57,14 @@ public class Todo {
         this.todoLink = todoLink;
         this.todoPic = todoPic;
         this.goal = goal;
+    }
+
+    public void update(UpdateTodoRequest request, String uploadPicUrl) {
+        this.todoTitle = request.title();
+        this.startDate = request.startDate();
+        this.endDate = request.endDate();
+        this.todoLink = request.todoLink();
+        this.todoPic = uploadPicUrl;
+        this.todoStatus = request.todoStatus();
     }
 }

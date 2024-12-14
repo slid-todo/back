@@ -5,6 +5,7 @@ import com.codeit.todo.service.todo.TodoService;
 import com.codeit.todo.web.dto.request.todo.CreateTodoRequest;
 import com.codeit.todo.web.dto.request.todo.ReadTodoRequest;
 import com.codeit.todo.web.dto.request.todo.ReadTodoWithGoalRequest;
+import com.codeit.todo.web.dto.request.todo.UpdateTodoRequest;
 import com.codeit.todo.web.dto.response.Response;
 import com.codeit.todo.web.dto.response.todo.*;
 import io.swagger.v3.oas.annotations.Operation;
@@ -105,6 +106,13 @@ public class TodoController {
         return Response.ok(todoService.calculateTodoProgress(userId));
     }
 
+    @Operation(
+            summary = "오늘 할 일 전체 조회",
+            description = "오늘 할 일을 전체 조회하는 API 입니다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공")
+    })
     @GetMapping("/today")
     public Response<List<ReadTodayTodoResponse>> getTodayTodo(
             @AuthenticationPrincipal CustomUserDetails userDetails
@@ -113,4 +121,20 @@ public class TodoController {
         return Response.ok(todoService.findTodayTodo(userId));
     }
 
+    @Operation(
+            summary = "할 일 수정",
+            description = "오늘 할 일을 전체 조회하는 API 입니다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공")
+    })
+    @PutMapping("{todoId}")
+    public Response<UpdateTodoResponse> updateTodo(
+            @PathVariable int todoId,
+            @RequestBody UpdateTodoRequest request,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        int userId = userDetails.getUserId();
+        return Response.ok(todoService.updateTodo(request, userId, todoId));
+    }
 }
