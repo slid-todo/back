@@ -53,7 +53,7 @@ public class GoalServiceImpl implements GoalService {
     @Transactional
     @Override
     public CreateGoalResponse saveGoal(int userId, CreateGoalRequest request) {
-        String[] colors= {"orange", "pink", "purple", "blue", "red"};
+        String[] colors= {"#FFAB76", "#F49696", "#B18AE0", "#A8D8F0", "#FFEC8B"};
         Random random = new Random();
         String color = colors[random.nextInt(colors.length)];
 
