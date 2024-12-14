@@ -16,7 +16,19 @@ import com.codeit.todo.web.dto.request.todo.ReadTodoRequest;
 import com.codeit.todo.web.dto.request.todo.ReadTodoWithGoalRequest;
 import com.codeit.todo.web.dto.request.todo.UpdateTodoRequest;
 import com.codeit.todo.web.dto.response.complete.ReadCompleteResponse;
-import com.codeit.todo.web.dto.response.todo.*;
+import com.codeit.todo.web.dto.response.todo.CreateTodoResponse;
+import com.codeit.todo.web.dto.response.todo.ReadTodayTodoResponse;
+import com.codeit.todo.web.dto.response.todo.ReadTodoProgressResponse;
+import com.codeit.todo.web.dto.response.todo.ReadTodoWithGoalResponse;
+import com.codeit.todo.web.dto.response.todo.ReadTodosResponse;
+import com.codeit.todo.web.dto.response.todo.ReadTodosWithGoalsResponse;
+import com.codeit.todo.web.dto.response.todo.UpdateTodoResponse;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -25,13 +37,6 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 @Slf4j
 @Service
