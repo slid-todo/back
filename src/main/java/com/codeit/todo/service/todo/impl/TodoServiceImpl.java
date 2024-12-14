@@ -1,6 +1,8 @@
 package com.codeit.todo.service.todo.impl;
 
+import com.codeit.todo.common.exception.auth.AuthorizationDeniedException;
 import com.codeit.todo.common.exception.goal.GoalNotFoundException;
+import com.codeit.todo.common.exception.todo.TodoNotFoundException;
 import com.codeit.todo.domain.Complete;
 import com.codeit.todo.domain.Goal;
 import com.codeit.todo.domain.Todo;
@@ -12,6 +14,7 @@ import com.codeit.todo.service.todo.TodoService;
 import com.codeit.todo.web.dto.request.todo.CreateTodoRequest;
 import com.codeit.todo.web.dto.request.todo.ReadTodoRequest;
 import com.codeit.todo.web.dto.request.todo.ReadTodoWithGoalRequest;
+import com.codeit.todo.web.dto.request.todo.UpdateTodoRequest;
 import com.codeit.todo.web.dto.response.complete.ReadCompleteResponse;
 import com.codeit.todo.web.dto.response.todo.*;
 import lombok.RequiredArgsConstructor;
@@ -185,6 +188,28 @@ public class TodoServiceImpl implements TodoService {
                     return ReadTodayTodoResponse.from(todo, todayComplete);
 
                 }).toList();
+    }
+
+    @Override
+    public UpdateTodoResponse updateTodo(UpdateTodoRequest request, int userId, int todoId) {
+        Todo todo = todoRepository.findById(todoId)
+                .orElseThrow(() -> new TodoNotFoundException(String.valueOf(todoId)));
+
+        if (todo.getGoal().getUser().getUserId() != userId) {
+            log.error("수정이 거부됨. 요청 유저 ID : {}", userId);
+            throw new AuthorizationDeniedException("수정하려는 할 일에 대한 권한이 없습니다.");
+        }
+
+        String uploadPicUrl = "";
+        if (Objects.nonNull(request.todoPicBase64()) && !request.todoPicBase64().isEmpty()) {
+            storageService.uploadFile(request.todoPicBase64(), request.picName());
+        }
+
+        todo.update(request, uploadPicUrl);
+
+        log.info("할 일 수정 성공. 수정된 할일 ID : {}", todoId);
+
+        return UpdateTodoResponse.fromEntity(todo);
     }
 
     private List<Todo> getTodayTodos(LocalDate today, int userId) {

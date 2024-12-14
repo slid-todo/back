@@ -3,6 +3,7 @@ package com.codeit.todo.service.todo;
 import com.codeit.todo.web.dto.request.todo.CreateTodoRequest;
 import com.codeit.todo.web.dto.request.todo.ReadTodoRequest;
 import com.codeit.todo.web.dto.request.todo.ReadTodoWithGoalRequest;
+import com.codeit.todo.web.dto.request.todo.UpdateTodoRequest;
 import com.codeit.todo.web.dto.response.todo.*;
 import org.springframework.data.domain.Slice;
 
@@ -21,4 +22,6 @@ public interface TodoService {
     ReadTodoProgressResponse calculateTodoProgress(int userId);
 
     List<ReadTodayTodoResponse> findTodayTodo(int userId);
+
+    UpdateTodoResponse updateTodo(UpdateTodoRequest request, int userId, int todoId);
 }
