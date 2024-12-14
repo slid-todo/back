@@ -13,11 +13,9 @@ import com.codeit.todo.web.dto.request.todo.CreateTodoRequest;
 import com.codeit.todo.web.dto.request.todo.ReadTodoRequest;
 import com.codeit.todo.web.dto.request.todo.ReadTodoWithGoalRequest;
 import com.codeit.todo.web.dto.response.complete.ReadCompleteResponse;
-import com.codeit.todo.web.dto.response.todo.CreateTodoResponse;
-import com.codeit.todo.web.dto.response.todo.ReadTodoWithGoalResponse;
-import com.codeit.todo.web.dto.response.todo.ReadTodosResponse;
-import com.codeit.todo.web.dto.response.todo.ReadTodosWithGoalsResponse;
+import com.codeit.todo.web.dto.response.todo.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -32,10 +30,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class TodoServiceImpl implements TodoService {
+
+    private static final String COMPLETE = "인증";
 
     private final TodoRepository todoRepository;
     private final GoalRepository goalRepository;
@@ -76,7 +77,7 @@ public class TodoServiceImpl implements TodoService {
                                     .completeLink(complete.getCompleteLink())
                                     .completePic(complete.getCompletePic())
                                     .createdAt(complete.getCreatedAt())
-                                    .completedDate(complete.getCompletedDate())
+                                    .completedDate(complete.getStartDate())
                                     .build()
                     ).toList();
 
@@ -116,9 +117,9 @@ public class TodoServiceImpl implements TodoService {
 
             Complete complete = Complete.builder()
                     .todo(savedTodo)
-                    .completedDate(date)
+                    .startDate(date)
                     .createdAt(LocalDateTime.now())
-                    .completeStatus(false)
+                    .completeStatus("진행")
                     .build();
 
             completes.add(complete);
@@ -151,7 +152,7 @@ public class TodoServiceImpl implements TodoService {
                                                 .completeLink(complete.getCompleteLink())
                                                 .completePic(complete.getCompletePic())
                                                 .createdAt(complete.getCreatedAt())
-                                                .completedDate(complete.getCompletedDate())
+                                                .completedDate(complete.getStartDate())
                                                 .build()
                                 ).toList();
 
@@ -177,6 +178,7 @@ public class TodoServiceImpl implements TodoService {
                 }).toList();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Slice<ReadTodoWithGoalResponse> findTodoListWithGoal(int userId, int goalId, ReadTodoWithGoalRequest request) {
         Slice<Todo> todos;
@@ -203,5 +205,35 @@ public class TodoServiceImpl implements TodoService {
         ).toList();
 
         return new SliceImpl<>(responses, pageable, todos.hasNext());
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public ReadTodoProgressResponse calculateTodoProgress(int userId) {
+        LocalDate today = LocalDate.now();
+        List<Goal> goals = goalRepository.findByUser_UserId(userId);
+        List<Integer> goalIds = goals.stream()
+                .map(Goal::getGoalId)
+                .toList();
+
+        List<Todo> todos = todoRepository.findByGoal_GoalIdInAndStartDate(goalIds, today);
+
+        long totalCompletes = 0;
+        long certifiedCompletes = 0;
+
+        for (Todo todo : todos) {
+            totalCompletes += todo.getCompletes().stream()
+                    .filter(complete -> today.equals(complete.getStartDate()))
+                    .count();
+
+            certifiedCompletes += todo.getCompletes().stream()
+                    .filter(complete -> COMPLETE.equals(complete.getCompleteStatus()))
+                    .count();
+        }
+
+        double completeProgress = totalCompletes > 0 ? (double) certifiedCompletes / totalCompletes * 100 : 0;
+
+        log.info("할 일 진행상황 조회 성공 : {}", completeProgress);
+        return ReadTodoProgressResponse.from(completeProgress);
     }
 }

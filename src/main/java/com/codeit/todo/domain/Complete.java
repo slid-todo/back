@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -19,7 +20,7 @@ public class Complete {
     private int completeId;
 
     @Column(nullable = false)
-    private LocalDate completedDate;
+    private LocalDate startDate;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
@@ -28,15 +29,16 @@ public class Complete {
 
     private String completeLink;
     private String completePic;
-    private Boolean completeStatus;
+    @Column(nullable = false)
+    private String completeStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "todo_id", nullable = false)
     private Todo todo;
 
     @Builder
-    public Complete(LocalDate completedDate, LocalDateTime createdAt, String note, String completeLink, String completePic, Boolean completeStatus, Todo todo) {
-        this.completedDate = completedDate;
+    public Complete(LocalDate startDate, LocalDateTime createdAt, String note, String completeLink, String completeFile, String completePic, String completeStatus, Todo todo) {
+        this.startDate = startDate;
         this.createdAt = createdAt;
         this.note = note;
         this.completeLink = completeLink;
@@ -49,6 +51,8 @@ public class Complete {
         this.completePic = completePicUrl;
         this.completeLink = link;
         this.note = note;
-        this.completeStatus = true;
+        if (Objects.nonNull(completePicUrl) && !completePicUrl.isEmpty()) {
+            this.completeStatus = "인증";
+        }
     }
 }

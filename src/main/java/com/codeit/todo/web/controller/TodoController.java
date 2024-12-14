@@ -6,10 +6,7 @@ import com.codeit.todo.web.dto.request.todo.CreateTodoRequest;
 import com.codeit.todo.web.dto.request.todo.ReadTodoRequest;
 import com.codeit.todo.web.dto.request.todo.ReadTodoWithGoalRequest;
 import com.codeit.todo.web.dto.response.Response;
-import com.codeit.todo.web.dto.response.todo.CreateTodoResponse;
-import com.codeit.todo.web.dto.response.todo.ReadTodoWithGoalResponse;
-import com.codeit.todo.web.dto.response.todo.ReadTodosResponse;
-import com.codeit.todo.web.dto.response.todo.ReadTodosWithGoalsResponse;
+import com.codeit.todo.web.dto.response.todo.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -91,6 +88,21 @@ public class TodoController {
     ) {
         int userId = userDetails.getUserId();
         return Response.ok(todoService.saveTodo(userId, request));
+    }
+
+    @Operation(
+            summary = "오늘 할 일 진행상황 조회",
+            description = "오늘 할 일 진행상황을 조회하는 API 입니다. '인증된 할 일 / 전체 할 일'으로 계산되며 double 값이 반환됩니다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공")
+    })
+    @GetMapping("/progress")
+    public Response<ReadTodoProgressResponse> getTodoProgress(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        int userId = userDetails.getUserId();
+        return Response.ok(todoService.calculateTodoProgress(userId));
     }
 
 }
