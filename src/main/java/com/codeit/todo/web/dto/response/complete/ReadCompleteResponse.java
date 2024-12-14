@@ -12,7 +12,7 @@ public record ReadCompleteResponse(
         String completePic,
         String note,
         String completeLink,
-        String completeFile,
+        String completeStatus,
         LocalDateTime createdAt,
         LocalDate startDate
 ) {
@@ -22,6 +22,7 @@ public record ReadCompleteResponse(
                 .completePic(complete.getCompletePic())
                 .note(complete.getNote())
                 .completeLink(complete.getCompleteLink())
+                .completeStatus(complete.getCompleteStatus())
                 .createdAt(complete.getCreatedAt())
                 .startDate(complete.getStartDate())
                 .build();
