@@ -60,10 +60,11 @@ public class Todo {
     }
 
     public void update(UpdateTodoRequest request, String uploadPicUrl) {
-        this.todoTitle = request.todoTitle();
+        this.todoTitle = request.title();
         this.startDate = request.startDate();
         this.endDate = request.endDate();
         this.todoLink = request.todoLink();
         this.todoPic = uploadPicUrl;
+        this.todoStatus = request.todoStatus();
     }
 }
