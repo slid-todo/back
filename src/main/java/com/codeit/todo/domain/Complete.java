@@ -27,7 +27,6 @@ public class Complete {
     private String note;
 
     private String completeLink;
-    private String completeFile;
     private String completePic;
     private Boolean completeStatus;
 
@@ -36,20 +35,18 @@ public class Complete {
     private Todo todo;
 
     @Builder
-    public Complete(LocalDate completedDate, LocalDateTime createdAt, String note, String completeLink, String completeFile, String completePic, Boolean completeStatus, Todo todo) {
+    public Complete(LocalDate completedDate, LocalDateTime createdAt, String note, String completeLink, String completePic, Boolean completeStatus, Todo todo) {
         this.completedDate = completedDate;
         this.createdAt = createdAt;
         this.note = note;
         this.completeLink = completeLink;
-        this.completeFile = completeFile;
         this.completePic = completePic;
         this.completeStatus = completeStatus;
         this.todo = todo;
     }
 
-    public void update(String completePicUrl, String completeFileUrl, String link, String note) {
+    public void update(String completePicUrl, String link, String note) {
         this.completePic = completePicUrl;
-        this.completeFile = completeFileUrl;
         this.completeLink = link;
         this.note = note;
         this.completeStatus = true;
