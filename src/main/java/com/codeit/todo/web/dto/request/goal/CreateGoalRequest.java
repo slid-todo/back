@@ -8,8 +8,7 @@ import java.time.LocalDateTime;
 
 public record CreateGoalRequest (
         @NotNull
-        String title,
-        int userId
+        String title
 ) {
 
     public Goal toEntity(String color, User user) {
