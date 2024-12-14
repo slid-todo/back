@@ -105,4 +105,12 @@ public class TodoController {
         return Response.ok(todoService.calculateTodoProgress(userId));
     }
 
+    @GetMapping("/today")
+    public Response<List<ReadTodayTodoResponse>> getTodayTodo(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        int userId = userDetails.getUserId();
+        return Response.ok(todoService.findTodayTodo(userId));
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.codeit.todo.web.dto.response.todo;
 
+import com.codeit.todo.domain.Todo;
 import com.codeit.todo.web.dto.response.complete.ReadCompleteResponse;
 import lombok.Builder;
 
@@ -19,4 +20,17 @@ public record ReadTodosResponse(
         LocalDateTime createdAt,
         List<ReadCompleteResponse> completes
 ) {
+    public static ReadTodosResponse from(Todo todo, List<ReadCompleteResponse> completeResponses) {
+        return ReadTodosResponse.builder()
+                .todoId(todo.getTodoId())
+                .todoLink(todo.getTodoLink())
+                .todoStatus(todo.getTodoStatus())
+                .todoTitle(todo.getTodoTitle())
+                .startDate(todo.getStartDate())
+                .endDate(todo.getEndDate())
+                .todoPic(todo.getTodoPic())
+                .createdAt(todo.getCreatedAt())
+                .completes(completeResponses)
+                .build();
+    }
 }

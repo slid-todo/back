@@ -19,4 +19,6 @@ public interface TodoService {
     Slice<ReadTodoWithGoalResponse> findTodoListWithGoal(int userId, int goalId, ReadTodoWithGoalRequest request);
 
     ReadTodoProgressResponse calculateTodoProgress(int userId);
+
+    List<ReadTodayTodoResponse> findTodayTodo(int userId);
 }
