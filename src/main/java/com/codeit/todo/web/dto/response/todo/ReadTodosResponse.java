@@ -11,6 +11,7 @@ import java.util.List;
 @Builder
 public record ReadTodosResponse(
         int todoId,
+        String goalTitle,
         String todoTitle,
         LocalDate startDate,
         LocalDate endDate,
@@ -25,6 +26,7 @@ public record ReadTodosResponse(
                 .todoId(todo.getTodoId())
                 .todoLink(todo.getTodoLink())
                 .todoStatus(todo.getTodoStatus())
+                .goalTitle(todo.getGoal().getGoalTitle())
                 .todoTitle(todo.getTodoTitle())
                 .startDate(todo.getStartDate())
                 .endDate(todo.getEndDate())

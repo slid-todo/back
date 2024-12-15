@@ -123,10 +123,10 @@ public class TodoController {
 
     @Operation(
             summary = "할 일 수정",
-            description = "오늘 할 일을 전체 조회하는 API 입니다."
+            description = "오늘 할 일을 전체 수정하는 API 입니다."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "조회 성공")
+            @ApiResponse(responseCode = "200", description = "수정 성공")
     })
     @PutMapping("{todoId}")
     public Response<UpdateTodoResponse> updateTodo(
@@ -138,6 +138,13 @@ public class TodoController {
         return Response.ok(todoService.updateTodo(request, userId, todoId));
     }
 
+    @Operation(
+            summary = "할 일 삭제",
+            description = "오늘 할 일을 전체 삭제하는 API 입니다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "삭제 성공")
+    })
     @DeleteMapping("{todoId}")
     public Response<DeleteTodoResponse> deleteTodo(
             @PathVariable int todoId,
