@@ -12,6 +12,7 @@ import java.util.List;
 public record ReadTodosResponse(
         int todoId,
         String goalTitle,
+        String goalColor,
         String todoTitle,
         LocalDate startDate,
         LocalDate endDate,
@@ -28,6 +29,7 @@ public record ReadTodosResponse(
                 .todoStatus(todo.getTodoStatus())
                 .goalTitle(todo.getGoal().getGoalTitle())
                 .todoTitle(todo.getTodoTitle())
+                .goalColor(todo.getGoal().getColor())
                 .startDate(todo.getStartDate())
                 .endDate(todo.getEndDate())
                 .todoPic(todo.getTodoPic())

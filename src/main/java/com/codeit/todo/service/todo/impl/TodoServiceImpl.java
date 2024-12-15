@@ -17,13 +17,6 @@ import com.codeit.todo.web.dto.request.todo.ReadTodoWithGoalRequest;
 import com.codeit.todo.web.dto.request.todo.UpdateTodoRequest;
 import com.codeit.todo.web.dto.response.complete.ReadCompleteResponse;
 import com.codeit.todo.web.dto.response.todo.*;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -32,6 +25,13 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -118,11 +118,7 @@ public class TodoServiceImpl implements TodoService {
 
                     List<ReadTodosResponse> responses = getTodoResponses(todos);
 
-                    return new ReadTodosWithGoalsResponse(
-                            goal.getGoalId(),
-                            goal.getGoalTitle(),
-                            responses
-                    );
+                    return ReadTodosWithGoalsResponse.from(goal, responses);
 
                 }).toList();
     }
