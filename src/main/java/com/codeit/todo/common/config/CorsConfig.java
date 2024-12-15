@@ -12,6 +12,7 @@ public class CorsConfig {
     public static CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedOrigin("http://localhost:3000");
+        configuration.addAllowedOrigin("https://localhost:3000");
         configuration.addAllowedOrigin("https://front-sooty-three.vercel.app");
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
