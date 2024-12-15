@@ -8,6 +8,6 @@ public class AuthorizationDeniedException extends ApplicationException {
 
     public AuthorizationDeniedException(String message) {
         super(ErrorStatus.toErrorStatus(
-                message, 401));
+                message, 403));
     }
 }
