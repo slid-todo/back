@@ -16,13 +16,8 @@ import com.codeit.todo.web.dto.request.todo.ReadTodoRequest;
 import com.codeit.todo.web.dto.request.todo.ReadTodoWithGoalRequest;
 import com.codeit.todo.web.dto.request.todo.UpdateTodoRequest;
 import com.codeit.todo.web.dto.response.complete.ReadCompleteResponse;
-import com.codeit.todo.web.dto.response.todo.CreateTodoResponse;
-import com.codeit.todo.web.dto.response.todo.ReadTodayTodoResponse;
-import com.codeit.todo.web.dto.response.todo.ReadTodoProgressResponse;
-import com.codeit.todo.web.dto.response.todo.ReadTodoWithGoalResponse;
-import com.codeit.todo.web.dto.response.todo.ReadTodosResponse;
-import com.codeit.todo.web.dto.response.todo.ReadTodosWithGoalsResponse;
-import com.codeit.todo.web.dto.response.todo.UpdateTodoResponse;
+import com.codeit.todo.web.dto.response.todo.*;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -197,13 +192,7 @@ public class TodoServiceImpl implements TodoService {
 
     @Override
     public UpdateTodoResponse updateTodo(UpdateTodoRequest request, int userId, int todoId) {
-        Todo todo = todoRepository.findById(todoId)
-                .orElseThrow(() -> new TodoNotFoundException(String.valueOf(todoId)));
-
-        if (todo.getGoal().getUser().getUserId() != userId) {
-            log.error("수정이 거부됨. 요청 유저 ID : {}", userId);
-            throw new AuthorizationDeniedException("수정하려는 할 일에 대한 권한이 없습니다.");
-        }
+        Todo todo = getTodo(userId, todoId);
 
         String uploadPicUrl = "";
         if (Objects.nonNull(request.imageEncodedBase64()) && !request.imageEncodedBase64().isEmpty()) {
@@ -215,6 +204,26 @@ public class TodoServiceImpl implements TodoService {
         log.info("할 일 수정 성공. 수정된 할일 ID : {}", todoId);
 
         return UpdateTodoResponse.fromEntity(todo);
+    }
+
+    @Override
+    public DeleteTodoResponse deleteTodo(int userId, int todoId) {
+        Todo todo = getTodo(userId, todoId);
+        todoRepository.delete(todo);
+
+        return DeleteTodoResponse.from(todoId);
+    }
+
+    private Todo getTodo(int userId, int todoId) {
+        Todo todo = todoRepository.findById(todoId)
+                .orElseThrow(() -> new TodoNotFoundException(String.valueOf(todoId)));
+
+        if (todo.getGoal().getUser().getUserId() != userId) {
+            log.error("할일 작업 거부됨. 요청 유저 ID : {}", userId);
+            throw new AuthorizationDeniedException("할 일 작업에 대한 권한이 없습니다.");
+        }
+
+        return todo;
     }
 
     private List<Todo> getTodayTodos(LocalDate today, int userId) {
