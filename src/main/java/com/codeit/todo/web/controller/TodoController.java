@@ -137,4 +137,13 @@ public class TodoController {
         int userId = userDetails.getUserId();
         return Response.ok(todoService.updateTodo(request, userId, todoId));
     }
+
+    @DeleteMapping("{todoId}")
+    public Response<DeleteTodoResponse> deleteTodo(
+            @PathVariable int todoId,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        int userId = userDetails.getUserId();
+        return Response.ok(todoService.deleteTodo(userId, todoId));
+    }
 }
