@@ -10,6 +10,7 @@ import com.codeit.todo.repository.UserRepository;
 import com.codeit.todo.service.user.UserService;
 import com.codeit.todo.web.dto.request.auth.LoginRequest;
 import com.codeit.todo.web.dto.request.auth.SignUpRequest;
+import com.codeit.todo.web.dto.response.auth.ReadUserResponse;
 import com.codeit.todo.web.dto.response.auth.SignUpResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -75,6 +76,14 @@ public class UserServiceImpl implements UserService {
                     LocalDateTime.now()
             ));
         }
+    }
+
+    @Override
+    public ReadUserResponse findUserInfo(int userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(()-> new UserNotFoundException(String.valueOf(userId), "User"));
+
+        return ReadUserResponse.from(user);
     }
 
 

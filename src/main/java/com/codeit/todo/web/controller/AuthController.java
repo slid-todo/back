@@ -1,10 +1,12 @@
 package com.codeit.todo.web.controller;
 
 import com.codeit.todo.common.config.JwtTokenProvider;
+import com.codeit.todo.repository.CustomUserDetails;
 import com.codeit.todo.service.user.UserService;
 import com.codeit.todo.web.dto.request.auth.LoginRequest;
 import com.codeit.todo.web.dto.request.auth.SignUpRequest;
 import com.codeit.todo.web.dto.response.Response;
+import com.codeit.todo.web.dto.response.auth.ReadUserResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -13,11 +15,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -53,4 +53,13 @@ public class AuthController {
         return ResponseEntity.ok( "로그인 성공");
     }
 
+    @Operation(summary = "유저 정보 가져오기", description = "유저의 이름, 이메일 가져오기")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공")
+    })
+    @GetMapping(value = "/user")
+    public Response getUserInfo(@AuthenticationPrincipal CustomUserDetails customUserDetails){
+        int userId = customUserDetails.getUserId();
+        return Response.ok( userService.findUserInfo(userId) );
+    }
 }

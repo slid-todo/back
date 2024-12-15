@@ -12,8 +12,6 @@ public record ReadGoalsResponse(
         LocalDateTime createdAt
 
 
-
-
 ) {
 
 }
