@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,7 +26,8 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final UserService userService;
-    private final JwtTokenProvider jwtTokenProvider;
+    private static final int COOKIE_VALID_SECONDS = 60*60*24; //24시간
+
 
     @Transactional
     @Operation(summary = "회원가입", description = "이름, 이메일, 비밀번호로 회원가입")
@@ -42,15 +44,19 @@ public class AuthController {
             @ApiResponse(responseCode = "200", description = "로그인 성공")
     })
     @PostMapping(value = "/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest, HttpServletResponse httpServletResponse){
+    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest){
         String token = userService.login(loginRequest);
-        httpServletResponse.addHeader("Access-Control-Expose-Headers", "token");
-        httpServletResponse.setHeader("token", token);
+        ResponseCookie cookie = ResponseCookie.from("token", token)
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(COOKIE_VALID_SECONDS)
+                .sameSite("None")
+                .build();
 
-        Cookie cookie = jwtTokenProvider.createCookie(loginRequest.email());
-        httpServletResponse.addCookie(cookie);
-
-        return ResponseEntity.ok( "로그인 성공");
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body("로그인 성공");
     }
 
     @Operation(summary = "유저 정보 가져오기", description = "유저의 이름, 이메일 가져오기")
