@@ -52,6 +52,7 @@ public class AuthController {
                 .path("/")
                 .maxAge(COOKIE_VALID_SECONDS)
                 .sameSite("None")
+                .domain(".vercel.app")
                 .build();
 
         return ResponseEntity.ok()
