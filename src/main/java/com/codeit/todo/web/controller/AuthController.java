@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final UserService userService;
-    private static final int COOKIE_VALID_SECONDS = 60*60*24; //24시간
+    private final JwtTokenProvider jwtTokenProvider;
 
 
     @Transactional
@@ -46,14 +46,7 @@ public class AuthController {
     @PostMapping(value = "/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest){
         String token = userService.login(loginRequest);
-        ResponseCookie cookie = ResponseCookie.from("token", token)
-                .httpOnly(true)
-                .secure(true)
-                .path("/")
-                .maxAge(COOKIE_VALID_SECONDS)
-                .sameSite("None")
-                .domain(".solidtodo.shop")
-                .build();
+        ResponseCookie cookie = jwtTokenProvider.createResponseCookie(token);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
