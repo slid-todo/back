@@ -52,7 +52,7 @@ public class AuthController {
                 .path("/")
                 .maxAge(COOKIE_VALID_SECONDS)
                 .sameSite("None")
-                .domain(".vercel.app")
+                .domain(".solidtodo.shop")
                 .build();
 
         return ResponseEntity.ok()

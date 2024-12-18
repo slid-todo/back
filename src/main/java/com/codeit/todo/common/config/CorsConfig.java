@@ -13,7 +13,7 @@ public class CorsConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedOrigin("http://localhost:3000");
         configuration.addAllowedOrigin("https://localhost:3000");
-        configuration.addAllowedOrigin("https://local.vercel.app");
+        configuration.addAllowedOrigin("https://local.solidtodo.shop");
         configuration.addAllowedOrigin("https://front-sooty-three.vercel.app");
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
