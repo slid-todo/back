@@ -24,9 +24,7 @@ import java.util.Date;
 public class JwtTokenProvider {
 
     private static final int UNAUTHORIZED = 401;
-    private static final long TOKEN_VALID_MILLI_SECONDS =1000L*60*60; //1시간
-    private static final int COOKIE_VALID_SECONDS = 60*60*24; //24시간
-
+    private static final long TOKEN_VALID_MILLI_SECONDS =1000L*60*60*24; //1시간
     
 
     @Value("${jwtpassword.source}")
@@ -93,15 +91,4 @@ public class JwtTokenProvider {
     }
 
 
-    public ResponseCookie createResponseCookie(String token) {
-        ResponseCookie cookie = ResponseCookie.from("token", token)
-                .httpOnly(true)
-                .secure(true)
-                .path("/")
-                .maxAge(COOKIE_VALID_SECONDS)
-                .sameSite("None")
-                .domain(".solidtodo.shop")
-                .build();
-        return cookie;
-    }
 }
