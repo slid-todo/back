@@ -17,11 +17,12 @@ public record SignUpRequest(
         @NotNull
         String passwordCheck) {
 
-    public User toEntity(String encodedPassword) {
+    public User toEntity(String encodedPassword, String profilePic) {
         return User.builder()
                 .name(this.name)
                 .email(this.email)
                 .password(encodedPassword)
+                .profilePic(profilePic)
                 .build();
     }
 

@@ -25,12 +25,16 @@ public class User {
     @Column(name= "password", nullable = false)
     private String password;
 
+    @Column(name = "profile_pic", nullable = false)
+    private String profilePic;
+
 
     @Builder
-    public User(int userId, String name, String email, String password) {
+    public User(int userId, String name, String email, String password, String profilePic) {
         this.userId = userId;
         this.name = name;
         this.email = email;
         this.password = password;
+        this.profilePic = profilePic;
     }
 }
