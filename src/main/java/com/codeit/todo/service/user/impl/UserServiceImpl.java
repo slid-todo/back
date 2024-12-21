@@ -49,7 +49,10 @@ public class UserServiceImpl implements UserService {
         //비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(password);
 
-        User user = request.toEntity(encodedPassword);
+        //회원가입 시 기본 프로필 이미지 등록
+        String profilePic = "https://slid-todo.s3.ap-northeast-2.amazonaws.com/auth/default_profilepic_mouse.png";
+
+        User user = request.toEntity(encodedPassword, profilePic);
         User savedUser = userRepository.save(user);
 
         return new SignUpResponse(savedUser.getUserId());
