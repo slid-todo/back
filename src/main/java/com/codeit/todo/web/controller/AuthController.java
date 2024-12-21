@@ -44,13 +44,12 @@ public class AuthController {
             @ApiResponse(responseCode = "200", description = "로그인 성공")
     })
     @PostMapping(value = "/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest){
+    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest, HttpServletResponse httpServletResponse){
         String token = userService.login(loginRequest);
-        ResponseCookie cookie = jwtTokenProvider.createResponseCookie(token);
+        httpServletResponse.addHeader("Access-Control-Expose-Headers", "token");
+        httpServletResponse.setHeader("token", token);
 
-        return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                .body("로그인 성공");
+        return ResponseEntity.ok( "로그인 성공");
     }
 
     @Operation(summary = "유저 정보 가져오기", description = "유저의 이름, 이메일 가져오기")
