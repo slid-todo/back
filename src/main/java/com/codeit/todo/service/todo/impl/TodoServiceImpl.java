@@ -228,7 +228,7 @@ public class TodoServiceImpl implements TodoService {
                 .map(Goal::getGoalId)
                 .toList();
 
-        return todoRepository.findByGoal_GoalIdInAndStartDate(goalIds, today);
+        return todoRepository.findTodosBetweenDates(goalIds, today);
     }
 
     private List<ReadTodosResponse> getTodoResponses(Slice<Todo> todos) {

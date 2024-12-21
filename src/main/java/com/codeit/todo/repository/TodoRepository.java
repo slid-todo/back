@@ -4,6 +4,8 @@ import com.codeit.todo.domain.Todo;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -17,5 +19,6 @@ public interface TodoRepository extends JpaRepository<Todo, Integer> {
 
     Slice<Todo> findByGoal_GoalIdAndTodoIdLessThanOrderByTodoIdDesc(int goalId, Integer lastTodoId, Pageable pageable);
 
-    List<Todo> findByGoal_GoalIdInAndStartDate(List<Integer> goalIds, LocalDate today);
+    @Query("select t from Todo t where t.goal.goalId in :goalIds and :today between t.startDate and t.endDate")
+    List<Todo> findTodosBetweenDates(@Param("goalIds") List<Integer> goalIds, @Param("today") LocalDate today);
 }
