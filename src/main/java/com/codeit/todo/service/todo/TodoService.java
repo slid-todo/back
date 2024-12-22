@@ -26,4 +26,6 @@ public interface TodoService {
     UpdateTodoResponse updateTodo(UpdateTodoRequest request, int userId, int todoId);
 
     DeleteTodoResponse deleteTodo(int userId, int todoId);
+
+    ReadTodoDetailResponse getTodoDetail(int userId, int todoId);
 }
