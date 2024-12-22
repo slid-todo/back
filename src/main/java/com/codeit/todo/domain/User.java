@@ -37,4 +37,8 @@ public class User {
         this.password = password;
         this.profilePic = profilePic;
     }
+
+    public void updateProfilePic(String completePicUrl){
+        this.profilePic = completePicUrl;
+    }
 }
