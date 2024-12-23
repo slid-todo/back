@@ -106,16 +106,7 @@ public class GoalServiceImpl implements GoalService {
                 .map(goal -> {
                     List<Todo> todos = todoRepository.findByGoal_GoalId(goal.getGoalId());
 
-                    List<ReadTodosResponse> todosResponses = todos.stream()
-                            .map(todo-> {
-                                List<Complete> completes = completeRepository.findByTodo_TodoId(todo.getTodoId());
-
-                                List<ReadCompleteResponse> completesResponses = completes.stream()
-                                        .map(ReadCompleteResponse::from)
-                                        .toList();
-
-                                return ReadTodosResponse.from(todo, completesResponses);
-                            }).toList();
+                    List<ReadTodosResponse> todosResponses = todoServiceImpl.makeTodosResponses(todos);
 
                     double goalProgress = todoServiceImpl.calculateGoalProgress(todos);
 

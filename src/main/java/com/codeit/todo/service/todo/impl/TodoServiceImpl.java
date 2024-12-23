@@ -121,16 +121,7 @@ public class TodoServiceImpl implements TodoService {
                 .map(goal -> {
                     List<Todo> todos = todoRepository.findTodosByGoalIdBetweenDates(goal.getGoalId(), LocalDate.now());
 
-                    List<ReadTodosResponse> todosResponses = todos.stream()
-                            .map(todo -> {
-                                List<Complete> completes = completeRepository.findByTodo_TodoId(todo.getTodoId());
-
-                                List<ReadCompleteResponse> completeResponses = completes.stream()
-                                        .map(ReadCompleteResponse::from)
-                                        .toList();
-
-                                return ReadTodosResponse.from(todo, completeResponses);
-                            }).toList();
+                    List<ReadTodosResponse> todosResponses = makeTodosResponses(todos);
 
                     double goalProgress = calculateGoalProgress(todos);
 
@@ -281,5 +272,20 @@ public class TodoServiceImpl implements TodoService {
         }
 
         return totalCompletes > 0 ? (completedCompletes / (double) totalCompletes) * 100 : 0;
+    }
+
+    public List<ReadTodosResponse> makeTodosResponses(List<Todo> todos){
+        List<ReadTodosResponse> todosResponses = todos.stream()
+                .map(todo -> {
+                    List<Complete> completes = completeRepository.findByTodo_TodoId(todo.getTodoId());
+
+                    List<ReadCompleteResponse> completeResponses = completes.stream()
+                            .map(ReadCompleteResponse::from)
+                            .toList();
+
+                    return ReadTodosResponse.from(todo, completeResponses);
+                }).toList();
+
+        return todosResponses;
     }
 }
