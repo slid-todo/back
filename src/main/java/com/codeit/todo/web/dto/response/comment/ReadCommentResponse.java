@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 public record ReadCommentResponse(
         int commentId,
         String content,
+        String userName,
         String profileImage,
         LocalDateTime createdAt
 ) {
@@ -16,6 +17,7 @@ public record ReadCommentResponse(
         return ReadCommentResponse.builder()
                 .commentId(comment.getCommentId())
                 .content(comment.getContent())
+                .userName(comment.getUser().getName())
                 .profileImage(comment.getUser().getProfilePic())
                 .createdAt(comment.getCreatedAt())
                 .build();
