@@ -132,7 +132,9 @@ public class TodoServiceImpl implements TodoService {
                                 return ReadTodosResponse.from(todo, completeResponses);
                             }).toList();
 
-                    return ReadTodosWithGoalsResponse.from(goal, todosResponses);
+                    double goalProgress = calculateGoalProgress(todos);
+
+                    return ReadTodosWithGoalsResponse.from(goal, todosResponses, goalProgress);
                 })
                 .toList();
 
@@ -264,5 +266,20 @@ public class TodoServiceImpl implements TodoService {
 
                     return ReadTodosResponse.from(todo, completeResponses);
                 }).toList();
+    }
+
+    private double calculateGoalProgress(List<Todo> todos) {
+        long totalCompletes = 0;
+        long completedCompletes = 0;
+
+        for (Todo todo : todos) {
+            List<Complete> completes = completeRepository.findByTodo_TodoId(todo.getTodoId());
+            totalCompletes += completes.size();
+            completedCompletes += completes.stream()
+                    .filter(complete -> COMPLETE.equals(complete.getCompleteStatus()))
+                    .count();
+        }
+
+        return totalCompletes > 0 ? (completedCompletes / (double) totalCompletes) * 100 : 0;
     }
 }
