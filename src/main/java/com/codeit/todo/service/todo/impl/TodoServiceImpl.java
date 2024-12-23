@@ -210,6 +210,12 @@ public class TodoServiceImpl implements TodoService {
         return DeleteTodoResponse.from(todoId);
     }
 
+    @Override
+    public ReadTodoDetailResponse getTodoDetail(int userId, int todoId) {
+        Todo todo = getTodo(userId, todoId);
+        return ReadTodoDetailResponse.from(todo);
+    }
+
     private Todo getTodo(int userId, int todoId) {
         Todo todo = todoRepository.findById(todoId)
                 .orElseThrow(() -> new TodoNotFoundException(String.valueOf(todoId)));

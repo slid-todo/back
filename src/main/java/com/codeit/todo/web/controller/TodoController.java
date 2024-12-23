@@ -7,6 +7,7 @@ import com.codeit.todo.web.dto.request.todo.ReadTodoRequest;
 import com.codeit.todo.web.dto.request.todo.ReadTodoWithGoalRequest;
 import com.codeit.todo.web.dto.request.todo.UpdateTodoRequest;
 import com.codeit.todo.web.dto.response.Response;
+import com.codeit.todo.web.dto.response.goal.ReadGoalsResponse;
 import com.codeit.todo.web.dto.response.todo.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -152,5 +153,17 @@ public class TodoController {
     ) {
         int userId = userDetails.getUserId();
         return Response.ok(todoService.deleteTodo(userId, todoId));
+    }
+
+    @Operation(summary = "할 일 상세 조회", description = "하나의 할일을 상세하게 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "상세 조회 성공")
+    })
+    @GetMapping("/{todoId}")
+    public Response<ReadTodoDetailResponse> readTodoDetail(
+            @PathVariable int todoId,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails){
+        int userId= customUserDetails.getUserId();
+        return Response.ok(todoService.getTodoDetail(userId, todoId));
     }
 }
