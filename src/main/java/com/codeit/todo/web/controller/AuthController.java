@@ -5,8 +5,12 @@ import com.codeit.todo.repository.CustomUserDetails;
 import com.codeit.todo.service.user.UserService;
 import com.codeit.todo.web.dto.request.auth.LoginRequest;
 import com.codeit.todo.web.dto.request.auth.SignUpRequest;
+import com.codeit.todo.web.dto.request.auth.UpdatePictureRequest;
+import com.codeit.todo.web.dto.request.complete.UpdateCompleteRequest;
 import com.codeit.todo.web.dto.response.Response;
 import com.codeit.todo.web.dto.response.auth.ReadUserResponse;
+import com.codeit.todo.web.dto.response.auth.UpdatePictureResponse;
+import com.codeit.todo.web.dto.response.complete.UpdateCompleteResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -60,5 +64,22 @@ public class AuthController {
     public Response getUserInfo(@AuthenticationPrincipal CustomUserDetails customUserDetails){
         int userId = customUserDetails.getUserId();
         return Response.ok( userService.findUserInfo(userId) );
+    }
+
+    @Transactional
+    @Operation(
+            summary = "프로필 사진 수정",
+            description = "유저가 원하는 사진을 골라 프로필 사진을 수정"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "수정 성공")
+    })
+    @PutMapping("/profilepic")
+    public Response<UpdatePictureResponse> updateUserProfilePicture(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestBody UpdatePictureRequest pictureRequest
+            ) {
+        int userId = userDetails.getUserId();
+        return Response.ok(userService.updateProfilePicture(userId, pictureRequest));
     }
 }

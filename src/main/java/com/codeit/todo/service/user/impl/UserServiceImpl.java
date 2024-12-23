@@ -7,11 +7,14 @@ import com.codeit.todo.common.exception.user.SignUpException;
 import com.codeit.todo.common.exception.user.UserNotFoundException;
 import com.codeit.todo.domain.User;
 import com.codeit.todo.repository.UserRepository;
+import com.codeit.todo.service.storage.StorageService;
 import com.codeit.todo.service.user.UserService;
 import com.codeit.todo.web.dto.request.auth.LoginRequest;
 import com.codeit.todo.web.dto.request.auth.SignUpRequest;
+import com.codeit.todo.web.dto.request.auth.UpdatePictureRequest;
 import com.codeit.todo.web.dto.response.auth.ReadUserResponse;
 import com.codeit.todo.web.dto.response.auth.SignUpResponse;
+import com.codeit.todo.web.dto.response.auth.UpdatePictureResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.SignatureException;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +34,7 @@ public class UserServiceImpl implements UserService {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
+    private final StorageService storageService;
 
     private static final int CONFLICT = 409;
 
@@ -87,6 +92,28 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(()-> new UserNotFoundException(String.valueOf(userId), "User"));
 
         return ReadUserResponse.from(user);
+    }
+
+    @Override
+    public UpdatePictureResponse updateProfilePicture(int userId, UpdatePictureRequest pictureRequest) {
+        User user = getUser(userId);
+
+        String newProfilePicUrl = "";
+
+        if(Objects.nonNull(pictureRequest.profilePicBase64()) && !pictureRequest.profilePicBase64().isEmpty()){
+            newProfilePicUrl = storageService.uploadFile(pictureRequest.profilePicBase64(), pictureRequest.profilePicName());
+        }
+
+        user.updateProfilePic(newProfilePicUrl);
+
+
+        return new UpdatePictureResponse(userId);
+    }
+
+    private User getUser(int userId){
+        User user = userRepository.findById(userId)
+                .orElseThrow(()-> new UserNotFoundException(String.valueOf(userId), "User"));
+        return user;
     }
 
 
