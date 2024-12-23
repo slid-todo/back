@@ -11,12 +11,10 @@ import com.codeit.todo.repository.GoalRepository;
 import com.codeit.todo.repository.TodoRepository;
 import com.codeit.todo.service.storage.StorageService;
 import com.codeit.todo.service.todo.TodoService;
-import com.codeit.todo.web.dto.request.todo.CreateTodoRequest;
-import com.codeit.todo.web.dto.request.todo.ReadTodoRequest;
-import com.codeit.todo.web.dto.request.todo.ReadTodoWithGoalRequest;
-import com.codeit.todo.web.dto.request.todo.UpdateTodoRequest;
+import com.codeit.todo.web.dto.request.todo.*;
 import com.codeit.todo.web.dto.response.complete.ReadCompleteResponse;
 import com.codeit.todo.web.dto.response.todo.*;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -108,19 +106,37 @@ public class TodoServiceImpl implements TodoService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<ReadTodosWithGoalsResponse> findTodoListWithGoals(int userId, ReadTodoWithGoalRequest request) {
-        List<Goal> goals = goalRepository.findByUser_UserId(userId);
+    public Slice<ReadTodosWithGoalsResponse> findTodoListWithGoals(int userId, @Valid ReadDashBoardTodoWithGoalRequest request) {
+        int pageSize = request.size();
+        Pageable pageable = PageRequest.of(0, pageSize);
 
-        return goals.stream()
+        Slice<Goal> goals;
+        if (Objects.isNull(request.lastGoalId()) || request.lastGoalId() <= 0) {
+            goals = goalRepository.findByUser_UserId(userId, pageable);
+        } else {
+            goals = goalRepository.findByGoalIdAndUser_UserId(request.lastGoalId(), userId, pageable);
+        }
+
+        List<ReadTodosWithGoalsResponse> responses = goals.getContent().stream()
                 .map(goal -> {
-                    Pageable pageable = PageRequest.of(0, request.size());
-                    Slice<Todo> todos = todoRepository.findByGoal_GoalIdOrderByTodoIdDesc(goal.getGoalId(), pageable);
+                    List<Todo> todos = todoRepository.findTodosByGoalIdBetweenDates(goal.getGoalId(), LocalDate.now());
 
-                    List<ReadTodosResponse> responses = getTodoResponses(todos);
+                    List<ReadTodosResponse> todosResponses = todos.stream()
+                            .map(todo -> {
+                                List<Complete> completes = completeRepository.findByTodo_TodoId(todo.getTodoId());
 
-                    return ReadTodosWithGoalsResponse.from(goal, responses);
+                                List<ReadCompleteResponse> completeResponses = completes.stream()
+                                        .map(ReadCompleteResponse::from)
+                                        .toList();
 
-                }).toList();
+                                return ReadTodosResponse.from(todo, completeResponses);
+                            }).toList();
+
+                    return ReadTodosWithGoalsResponse.from(goal, todosResponses);
+                })
+                .toList();
+
+        return new SliceImpl<>(responses, pageable, goals.hasNext());
     }
 
     @Transactional(readOnly = true)
@@ -234,7 +250,7 @@ public class TodoServiceImpl implements TodoService {
                 .map(Goal::getGoalId)
                 .toList();
 
-        return todoRepository.findTodosBetweenDates(goalIds, today);
+        return todoRepository.findTodosByGoalIdsBetweenDates(goalIds, today);
     }
 
     private List<ReadTodosResponse> getTodoResponses(Slice<Todo> todos) {

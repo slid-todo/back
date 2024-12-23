@@ -2,10 +2,7 @@ package com.codeit.todo.web.controller;
 
 import com.codeit.todo.repository.CustomUserDetails;
 import com.codeit.todo.service.todo.TodoService;
-import com.codeit.todo.web.dto.request.todo.CreateTodoRequest;
-import com.codeit.todo.web.dto.request.todo.ReadTodoRequest;
-import com.codeit.todo.web.dto.request.todo.ReadTodoWithGoalRequest;
-import com.codeit.todo.web.dto.request.todo.UpdateTodoRequest;
+import com.codeit.todo.web.dto.request.todo.*;
 import com.codeit.todo.web.dto.response.Response;
 import com.codeit.todo.web.dto.response.goal.ReadGoalsResponse;
 import com.codeit.todo.web.dto.response.todo.*;
@@ -51,8 +48,8 @@ public class TodoController {
             @ApiResponse(responseCode = "200", description = "조회 성공")
     })
     @GetMapping("/goals")
-    public Response<List<ReadTodosWithGoalsResponse>> getTodoWithGoalList(
-            @Valid @ModelAttribute ReadTodoWithGoalRequest request,
+    public Response<Slice<ReadTodosWithGoalsResponse>> getTodoWithGoalList(
+            @Valid @ModelAttribute ReadDashBoardTodoWithGoalRequest request,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         int userId = userDetails.getUserId();
