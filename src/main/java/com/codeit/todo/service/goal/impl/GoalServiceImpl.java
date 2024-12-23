@@ -3,17 +3,26 @@ package com.codeit.todo.service.goal.impl;
 
 import com.codeit.todo.common.exception.goal.GoalNotFoundException;
 import com.codeit.todo.common.exception.user.UserNotFoundException;
+import com.codeit.todo.domain.Complete;
 import com.codeit.todo.domain.Goal;
+import com.codeit.todo.domain.Todo;
 import com.codeit.todo.domain.User;
+import com.codeit.todo.repository.CompleteRepository;
 import com.codeit.todo.repository.GoalRepository;
+import com.codeit.todo.repository.TodoRepository;
 import com.codeit.todo.repository.UserRepository;
 import com.codeit.todo.service.goal.GoalService;
+import com.codeit.todo.service.todo.TodoService;
+import com.codeit.todo.service.todo.impl.TodoServiceImpl;
+import com.codeit.todo.web.dto.response.complete.ReadCompleteResponse;
 import com.codeit.todo.web.dto.response.goal.DeleteGoalResponse;
 import com.codeit.todo.web.dto.request.goal.UpdateGoalRequest;
 import com.codeit.todo.web.dto.request.goal.CreateGoalRequest;
 import com.codeit.todo.web.dto.response.goal.CreateGoalResponse;
 import com.codeit.todo.web.dto.response.goal.ReadGoalsResponse;
 import com.codeit.todo.web.dto.response.goal.UpdateGoalResponse;
+import com.codeit.todo.web.dto.response.todo.ReadTodosResponse;
+import com.codeit.todo.web.dto.response.todo.ReadTodosWithGoalsResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +37,9 @@ public class GoalServiceImpl implements GoalService {
 
     private final UserRepository userRepository;
     private final GoalRepository goalRepository;
+    private final TodoRepository todoRepository;
+    private final CompleteRepository completeRepository;
+    private final TodoServiceImpl todoServiceImpl;
 
 
     @Override
@@ -85,5 +97,31 @@ public class GoalServiceImpl implements GoalService {
 
         goalRepository.delete(goal);
         return new DeleteGoalResponse(goalId);
+    }
+
+    @Override
+    public List<ReadTodosWithGoalsResponse> findAllGoals(int userId) {
+        List<Goal> goals = goalRepository.findByUser_UserId(userId);
+        List<ReadTodosWithGoalsResponse> goalsResponses = goals.stream()
+                .map(goal -> {
+                    List<Todo> todos = todoRepository.findByGoal_GoalId(goal.getGoalId());
+
+                    List<ReadTodosResponse> todosResponses = todos.stream()
+                            .map(todo-> {
+                                List<Complete> completes = completeRepository.findByTodo_TodoId(todo.getTodoId());
+
+                                List<ReadCompleteResponse> completesResponses = completes.stream()
+                                        .map(ReadCompleteResponse::from)
+                                        .toList();
+
+                                return ReadTodosResponse.from(todo, completesResponses);
+                            }).toList();
+
+                    double goalProgress = todoServiceImpl.calculateGoalProgress(todos);
+
+                    return ReadTodosWithGoalsResponse.from(goal, todosResponses, goalProgress);
+                }).toList();
+
+        return goalsResponses;
     }
 }

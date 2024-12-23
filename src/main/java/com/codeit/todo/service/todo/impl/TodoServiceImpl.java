@@ -268,7 +268,7 @@ public class TodoServiceImpl implements TodoService {
                 }).toList();
     }
 
-    private double calculateGoalProgress(List<Todo> todos) {
+    public double calculateGoalProgress(List<Todo> todos) {
         long totalCompletes = 0;
         long completedCompletes = 0;
 

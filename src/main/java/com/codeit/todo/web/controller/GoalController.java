@@ -9,6 +9,7 @@ import com.codeit.todo.web.dto.response.goal.DeleteGoalResponse;
 import com.codeit.todo.web.dto.response.goal.CreateGoalResponse;
 import com.codeit.todo.web.dto.response.goal.ReadGoalsResponse;
 import com.codeit.todo.web.dto.response.goal.UpdateGoalResponse;
+import com.codeit.todo.web.dto.response.todo.ReadTodosWithGoalsResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -81,6 +82,20 @@ public class GoalController {
     ) {
         int userId= customUserDetails.getUserId();
         return Response.ok(goalService.deleteGoal(userId, goalId));
+    }
+
+    @Transactional
+    @Operation(
+            summary = "목표와 할 일, 인증 상세조회",
+            description = "종료된 할 일 또는 인증도 포함해서 목표, 할 일, 인증을 모두 불러옵니다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공")
+    })
+    @GetMapping("/all")
+    public Response<List<ReadTodosWithGoalsResponse>> getGoalsDetail(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        int userId = userDetails.getUserId();
+        return Response.ok(goalService.findAllGoals(userId));
     }
 
 }

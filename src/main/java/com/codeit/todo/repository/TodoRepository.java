@@ -24,4 +24,6 @@ public interface TodoRepository extends JpaRepository<Todo, Integer> {
 
     @Query("select t from Todo t where t.goal.goalId = :goalId and :today between t.startDate and t.endDate")
     List<Todo> findTodosByGoalIdBetweenDates(@Param("goalId") int goalId, @Param("today") LocalDate today);
+
+    List<Todo> findByGoal_GoalId(int goalId);
 }
