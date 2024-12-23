@@ -5,9 +5,12 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.relational.core.sql.Like;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -35,6 +38,12 @@ public class Complete {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "todo_id", nullable = false)
     private Todo todo;
+
+    @OneToMany(mappedBy = "complete", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "complete", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Likes> likes = new ArrayList<>();
 
     @Builder
     public Complete(LocalDate startDate, LocalDateTime createdAt, String note, String completeLink, String completeFile, String completePic, String completeStatus, Todo todo) {

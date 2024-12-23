@@ -4,6 +4,8 @@ import com.codeit.todo.repository.CustomUserDetails;
 import com.codeit.todo.service.complete.CompleteService;
 import com.codeit.todo.web.dto.request.complete.UpdateCompleteRequest;
 import com.codeit.todo.web.dto.response.Response;
+import com.codeit.todo.web.dto.response.complete.ReadCompleteDetailResponse;
+import com.codeit.todo.web.dto.response.complete.ReadCompleteResponse;
 import com.codeit.todo.web.dto.response.complete.UpdateCompleteResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -34,5 +36,21 @@ public class CompleteController {
             ) {
         int userId = userDetails.getUserId();
         return Response.ok(completeService.updateCompleteInfo(userId, completeId, request));
+    }
+
+    @Operation(
+            summary = "인증 및 노트 상세 조회",
+            description = "인증 및 노트 상세조회하는  API 입니다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공")
+    })
+    @GetMapping("{completeId}")
+    public Response<ReadCompleteDetailResponse> readComplete(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable int completeId
+    ) {
+        int userId = userDetails.getUserId();
+        return Response.ok(completeService.readComplete(userId, completeId));
     }
 }
