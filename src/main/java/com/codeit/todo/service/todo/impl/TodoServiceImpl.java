@@ -106,16 +106,11 @@ public class TodoServiceImpl implements TodoService {
 
     @Transactional(readOnly = true)
     @Override
-    public Slice<ReadTodosWithGoalsResponse> findTodoListWithGoals(int userId, @Valid ReadDashBoardTodoWithGoalRequest request) {
+    public Slice<ReadTodosWithGoalsResponse> findTodoListWithGoals(int userId, @Valid ReadTodoCompleteWithGoalRequest request) {
         int pageSize = request.size();
         Pageable pageable = PageRequest.of(0, pageSize);
 
-        Slice<Goal> goals;
-        if (Objects.isNull(request.lastGoalId()) || request.lastGoalId() <= 0) {
-            goals = goalRepository.findByUser_UserId(userId, pageable);
-        } else {
-            goals = goalRepository.findByGoalIdAndUser_UserId(request.lastGoalId(), userId, pageable);
-        }
+        Slice<Goal> goals = getGoalsPagination(userId, request, pageable);
 
         List<ReadTodosWithGoalsResponse> responses = goals.getContent().stream()
                 .map(goal -> {
@@ -287,5 +282,16 @@ public class TodoServiceImpl implements TodoService {
                 }).toList();
 
         return todosResponses;
+    }
+
+    public Slice<Goal> getGoalsPagination(int userId, ReadTodoCompleteWithGoalRequest request, Pageable pageable){
+        Slice<Goal> goals;
+        if (Objects.isNull(request.lastGoalId()) || request.lastGoalId() <= 0) {
+            goals = goalRepository.findByUser_UserId(userId, pageable);
+        } else {
+            goals = goalRepository.findByGoalIdAndUser_UserId(request.lastGoalId(), userId, pageable);
+        }
+
+        return goals;
     }
 }

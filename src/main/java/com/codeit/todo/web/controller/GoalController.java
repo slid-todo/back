@@ -4,6 +4,7 @@ import com.codeit.todo.repository.CustomUserDetails;
 import com.codeit.todo.service.goal.GoalService;
 import com.codeit.todo.web.dto.request.goal.CreateGoalRequest;
 import com.codeit.todo.web.dto.request.goal.UpdateGoalRequest;
+import com.codeit.todo.web.dto.request.todo.ReadTodoCompleteWithGoalRequest;
 import com.codeit.todo.web.dto.response.Response;
 import com.codeit.todo.web.dto.response.goal.DeleteGoalResponse;
 import com.codeit.todo.web.dto.response.goal.CreateGoalResponse;
@@ -15,6 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Slice;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -93,9 +95,12 @@ public class GoalController {
             @ApiResponse(responseCode = "200", description = "조회 성공")
     })
     @GetMapping("/all")
-    public Response<List<ReadTodosWithGoalsResponse>> getGoalsDetail(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    public Response<Slice<ReadTodosWithGoalsResponse>> getGoalsDetail(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @Valid @ModelAttribute ReadTodoCompleteWithGoalRequest request
+            ) {
         int userId = userDetails.getUserId();
-        return Response.ok(goalService.findAllGoals(userId));
+        return Response.ok(goalService.findAllGoals(userId, request));
     }
 
 }

@@ -3,7 +3,6 @@ package com.codeit.todo.service.goal.impl;
 
 import com.codeit.todo.common.exception.goal.GoalNotFoundException;
 import com.codeit.todo.common.exception.user.UserNotFoundException;
-import com.codeit.todo.domain.Complete;
 import com.codeit.todo.domain.Goal;
 import com.codeit.todo.domain.Todo;
 import com.codeit.todo.domain.User;
@@ -12,9 +11,8 @@ import com.codeit.todo.repository.GoalRepository;
 import com.codeit.todo.repository.TodoRepository;
 import com.codeit.todo.repository.UserRepository;
 import com.codeit.todo.service.goal.GoalService;
-import com.codeit.todo.service.todo.TodoService;
 import com.codeit.todo.service.todo.impl.TodoServiceImpl;
-import com.codeit.todo.web.dto.response.complete.ReadCompleteResponse;
+import com.codeit.todo.web.dto.request.todo.ReadTodoCompleteWithGoalRequest;
 import com.codeit.todo.web.dto.response.goal.DeleteGoalResponse;
 import com.codeit.todo.web.dto.request.goal.UpdateGoalRequest;
 import com.codeit.todo.web.dto.request.goal.CreateGoalRequest;
@@ -24,10 +22,15 @@ import com.codeit.todo.web.dto.response.goal.UpdateGoalResponse;
 import com.codeit.todo.web.dto.response.todo.ReadTodosResponse;
 import com.codeit.todo.web.dto.response.todo.ReadTodosWithGoalsResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -99,9 +102,14 @@ public class GoalServiceImpl implements GoalService {
         return new DeleteGoalResponse(goalId);
     }
 
+    @Transactional(readOnly = true)
     @Override
-    public List<ReadTodosWithGoalsResponse> findAllGoals(int userId) {
-        List<Goal> goals = goalRepository.findByUser_UserId(userId);
+    public Slice<ReadTodosWithGoalsResponse> findAllGoals(int userId, ReadTodoCompleteWithGoalRequest request) {
+        int pageSize = request.size();
+        Pageable pageable = PageRequest.of(0, pageSize);
+
+        Slice<Goal> goals = todoServiceImpl.getGoalsPagination(userId, request, pageable);
+
         List<ReadTodosWithGoalsResponse> goalsResponses = goals.stream()
                 .map(goal -> {
                     List<Todo> todos = todoRepository.findByGoal_GoalId(goal.getGoalId());
@@ -113,6 +121,6 @@ public class GoalServiceImpl implements GoalService {
                     return ReadTodosWithGoalsResponse.from(goal, todosResponses, goalProgress);
                 }).toList();
 
-        return goalsResponses;
+        return new SliceImpl<>(goalsResponses, pageable, goals.hasNext());
     }
 }

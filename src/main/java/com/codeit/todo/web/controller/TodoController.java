@@ -4,7 +4,6 @@ import com.codeit.todo.repository.CustomUserDetails;
 import com.codeit.todo.service.todo.TodoService;
 import com.codeit.todo.web.dto.request.todo.*;
 import com.codeit.todo.web.dto.response.Response;
-import com.codeit.todo.web.dto.response.goal.ReadGoalsResponse;
 import com.codeit.todo.web.dto.response.todo.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -49,7 +48,7 @@ public class TodoController {
     })
     @GetMapping("/goals")
     public Response<Slice<ReadTodosWithGoalsResponse>> getTodoWithGoalList(
-            @Valid @ModelAttribute ReadDashBoardTodoWithGoalRequest request,
+            @Valid @ModelAttribute ReadTodoCompleteWithGoalRequest request,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         int userId = userDetails.getUserId();
