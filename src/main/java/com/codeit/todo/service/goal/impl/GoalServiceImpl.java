@@ -42,7 +42,6 @@ public class GoalServiceImpl implements GoalService {
     private final UserRepository userRepository;
     private final GoalRepository goalRepository;
     private final TodoRepository todoRepository;
-    private final CompleteRepository completeRepository;
     private final TodoServiceImpl todoServiceImpl;
 
 
@@ -83,6 +82,7 @@ public class GoalServiceImpl implements GoalService {
         return CreateGoalResponse.fromEntity(savedGoal);
     }
 
+    @Transactional
     @Override
     public UpdateGoalResponse updateGoal(int userId, int goalId, UpdateGoalRequest request) {
         Goal goal = goalRepository.findByGoalIdAndUser_UserId(goalId, userId)

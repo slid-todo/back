@@ -18,7 +18,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -55,7 +54,7 @@ public class GoalController {
     }
 
 
-    @Transactional
+
     @Operation(summary = "목표 수정",
             description = "기존 목표 제목 수정 API, 수정된 목표의 ID 반환")
     @ApiResponses(value = {
@@ -71,7 +70,7 @@ public class GoalController {
         return Response.ok(goalService.updateGoal(userId, goalId, request));
     }
 
-    @Transactional
+
     @Operation(summary = "목표 삭제",
             description = "목표 삭제 API, 삭제된 목표의 ID 반환")
     @ApiResponses(value = {
@@ -86,7 +85,6 @@ public class GoalController {
         return Response.ok(goalService.deleteGoal(userId, goalId));
     }
 
-    @Transactional
     @Operation(
             summary = "목표와 할 일, 인증 상세조회",
             description = "종료된 할 일 또는 인증도 포함해서 목표, 할 일, 인증을 모두 불러옵니다."
