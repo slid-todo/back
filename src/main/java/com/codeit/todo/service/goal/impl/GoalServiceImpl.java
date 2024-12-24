@@ -29,6 +29,7 @@ import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
@@ -121,6 +122,30 @@ public class GoalServiceImpl implements GoalService {
                     return ReadTodosWithGoalsResponse.from(goal, todosResponses, goalProgress);
                 }).toList();
 
-        return new SliceImpl<>(goalsResponses, pageable, goals.hasNext());
+        List<ReadTodosWithGoalsResponse> sortedGoalsResponses = sortAllGoals(goalsResponses);
+
+        return new SliceImpl<>(sortedGoalsResponses, pageable, goals.hasNext());
+    }
+
+    private List<ReadTodosWithGoalsResponse> sortAllGoals(List<ReadTodosWithGoalsResponse> goalsResponses){
+        List<ReadTodosWithGoalsResponse> sortedGoalsResponses = new ArrayList<>();
+
+        //todo status "진행"
+        List<ReadTodosWithGoalsResponse> goalsWithPriority = goalsResponses.stream()
+                .filter( goalResponse -> goalResponse.todos().stream()
+                        .anyMatch(todo -> "진행".equals(todo.todoStatus())))
+                .toList();
+
+        //todo status not "진행"
+        List<ReadTodosWithGoalsResponse> goalsWithoutPriority = goalsResponses.stream()
+                .filter( goalResponse -> goalResponse.todos().stream()
+                        .noneMatch(todo -> "진행".equals(todo.todoStatus())))
+                .toList();
+        //combine two lists
+        sortedGoalsResponses.addAll(goalsWithPriority);
+        sortedGoalsResponses.addAll(goalsWithoutPriority);
+
+        return sortedGoalsResponses;
+
     }
 }
