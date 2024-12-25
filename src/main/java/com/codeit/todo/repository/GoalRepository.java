@@ -4,7 +4,10 @@ import com.codeit.todo.domain.Goal;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,7 +16,26 @@ public interface GoalRepository extends JpaRepository<Goal, Integer> {
 
     Optional<Goal> findByGoalIdAndUser_UserId(int goalId, int userId);
 
-    Slice<Goal> findByUser_UserId(int userId, Pageable pageable);
+    Slice<Goal> findByUser_UserId(@Param("userId") int userId, Pageable pageable);
 
-    Slice<Goal> findByGoalIdAndUser_UserId(Integer goalId, int userId, Pageable pageable);
+    Slice<Goal> findByGoalIdAndUser_UserId(@Param("lastGoalId") Integer lastGoalId, @Param("userId") int userId, Pageable pageable);
+
+    @Query("""
+select g
+from Goal g
+join fetch g.todos t
+where g.user.userId = :userId
+and :today between t.startDate and t.endDate
+""")
+    Slice<Goal> findByUserAndHasTodos(@Param("userId") int userId, Pageable pageable, @Param("today") LocalDate today);
+
+    @Query("""
+select g
+from Goal g
+join fetch g.todos t
+where g.user.userId = :userId
+and g.goalId = :lastGoalId
+and :today between t.startDate and t.endDate
+""")
+    Slice<Goal> findByUserAndHasTodosAfterLastGoalId(@Param("lastGoalId") Integer lastGoalId, @Param("userId") int userId, Pageable pageable,  @Param("today") LocalDate today);
 }

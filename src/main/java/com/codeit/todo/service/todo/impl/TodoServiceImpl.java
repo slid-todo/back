@@ -110,12 +110,18 @@ public class TodoServiceImpl implements TodoService {
         int pageSize = request.size();
         Pageable pageable = PageRequest.of(0, pageSize);
 
-        Slice<Goal> goals = getGoalsPagination(userId, request, pageable);
+        Slice<Goal> goals;
+        LocalDate today = LocalDate.now();
+
+        if (Objects.isNull(request.lastGoalId()) || request.lastGoalId() <= 0) {
+            goals = goalRepository.findByUserAndHasTodos(userId, pageable, today);
+        } else {
+            goals = goalRepository.findByUserAndHasTodosAfterLastGoalId(request.lastGoalId(), userId, pageable, today);
+        }
 
         List<ReadTodosWithGoalsResponse> responses = goals.getContent().stream()
                 .map(goal -> {
-                    List<Todo> todos = todoRepository.findTodosByGoalIdBetweenDates(goal.getGoalId(), LocalDate.now());
-
+                    List<Todo> todos = goal.getTodos();
                     List<ReadTodosResponse> todosResponses = makeTodosResponses(todos);
 
                     double goalProgress = calculateGoalProgress(todos);
@@ -270,7 +276,7 @@ public class TodoServiceImpl implements TodoService {
     }
 
     public List<ReadTodosResponse> makeTodosResponses(List<Todo> todos){
-        List<ReadTodosResponse> todosResponses = todos.stream()
+        return todos.stream()
                 .map(todo -> {
                     List<Complete> completes = completeRepository.findByTodo_TodoId(todo.getTodoId());
 
@@ -280,8 +286,6 @@ public class TodoServiceImpl implements TodoService {
 
                     return ReadTodosResponse.from(todo, completeResponses);
                 }).toList();
-
-        return todosResponses;
     }
 
     public Slice<Goal> getGoalsPagination(int userId, ReadTodoCompleteWithGoalRequest request, Pageable pageable){
