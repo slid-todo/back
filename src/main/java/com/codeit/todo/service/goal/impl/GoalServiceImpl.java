@@ -109,7 +109,7 @@ public class GoalServiceImpl implements GoalService {
         int pageSize = request.size();
         Pageable pageable = PageRequest.of(0, pageSize);
 
-        Slice<Goal> goals = todoServiceImpl.getGoalsPagination(userId, request, pageable);
+        Slice<Goal> goals = getGoalsPagination(userId, request, pageable);
 
         List<ReadTodosWithGoalsResponse> goalsResponses = goals.stream()
                 .map(goal -> {
@@ -125,6 +125,16 @@ public class GoalServiceImpl implements GoalService {
         List<ReadTodosWithGoalsResponse> sortedGoalsResponses = sortAllGoals(goalsResponses);
 
         return new SliceImpl<>(sortedGoalsResponses, pageable, goals.hasNext());
+    }
+
+    private Slice<Goal> getGoalsPagination(int userId, ReadTodoCompleteWithGoalRequest request, Pageable pageable){
+        Slice<Goal> goals;
+        if (Objects.isNull(request.lastGoalId()) || request.lastGoalId() <= 0) {
+            goals = goalRepository.findByUser_UserId(userId, pageable);
+        } else {
+            goals = goalRepository.findByGoalIdAndUser_UserId(request.lastGoalId(), userId, pageable);
+        }
+        return goals;
     }
 
     private List<ReadTodosWithGoalsResponse> sortAllGoals(List<ReadTodosWithGoalsResponse> goalsResponses){

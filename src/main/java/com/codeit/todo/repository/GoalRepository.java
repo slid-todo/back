@@ -20,6 +20,10 @@ public interface GoalRepository extends JpaRepository<Goal, Integer> {
 
     Optional<Goal> findByGoalIdAndUser_UserId(int goalId, int userId);
 
+    Slice<Goal> findByUser_UserId(@Param("userId") int userId, Pageable pageable);
+
+    Slice<Goal> findByGoalIdAndUser_UserId(@Param("lastGoalId") Integer lastGoalId, @Param("userId") int userId, Pageable pageable);
+
     @Query("""
 select g
 from Goal g
