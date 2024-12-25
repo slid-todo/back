@@ -22,6 +22,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SignatureException;
 import java.time.LocalDateTime;
@@ -40,6 +41,7 @@ public class UserServiceImpl implements UserService {
 
     private static final int BAD_REQUEST = 400;
 
+    @Transactional
     @Override
     public SignUpResponse signUpUser(SignUpRequest request) {
         //기존에 있는 이메일인지 확인
@@ -94,6 +96,7 @@ public class UserServiceImpl implements UserService {
         return ReadUserResponse.from(user);
     }
 
+    @Transactional
     @Override
     public UpdatePictureResponse updateProfilePicture(int userId, UpdatePictureRequest pictureRequest) {
         User user = getUser(userId);
