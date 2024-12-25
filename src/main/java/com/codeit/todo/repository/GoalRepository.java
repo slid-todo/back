@@ -14,10 +14,6 @@ import java.util.Optional;
 public interface GoalRepository extends JpaRepository<Goal, Integer> {
     List<Goal> findByUser_UserId(int userId);
 
-    Slice<Goal> findByUser_UserId(int userId, Pageable pageable);
-
-    Slice<Goal> findByGoalIdAndUser_UserId(Integer goalId, int userId, Pageable pageable);
-
     Optional<Goal> findByGoalIdAndUser_UserId(int goalId, int userId);
 
     Slice<Goal> findByUser_UserId(@Param("userId") int userId, Pageable pageable);
