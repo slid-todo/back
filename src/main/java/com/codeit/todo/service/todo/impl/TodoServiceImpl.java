@@ -110,6 +110,7 @@ public class TodoServiceImpl implements TodoService {
         int pageSize = request.size();
         Pageable pageable = PageRequest.of(0, pageSize);
 
+
         Slice<Goal> goals;
         LocalDate today = LocalDate.now();
 
@@ -122,9 +123,16 @@ public class TodoServiceImpl implements TodoService {
         List<ReadTodosWithGoalsResponse> responses = goals.getContent().stream()
                 .map(goal -> {
                     List<Todo> todos = goal.getTodos();
+                    List<ReadTodosResponse> todosResponses = todos.stream()
+                            .map(todo -> {
+                                List<Complete> completes = todo.getCompletes();
 
+                                List<ReadCompleteResponse> completeResponses = completes.stream()
+                                        .map(ReadCompleteResponse::from)
+                                        .toList();
 
-                    List<ReadTodosResponse> todosResponses = makeTodosResponses(todos);
+                                return ReadTodosResponse.from(todo, completeResponses);
+                            }).toList();
 
                     double goalProgress = calculateGoalProgress(todos);
 
@@ -280,7 +288,7 @@ public class TodoServiceImpl implements TodoService {
     public List<ReadTodosResponse> makeTodosResponses(List<Todo> todos){
         List<ReadTodosResponse> todosResponses = todos.stream()
                 .map(todo -> {
-                    List<Complete> completes = todo.getCompletes();
+                    List<Complete> completes = completeRepository.findByTodo_TodoId(todo.getTodoId());
 
                     List<ReadCompleteResponse> completeResponses = completes.stream()
                             .map(ReadCompleteResponse::from)
@@ -292,4 +300,14 @@ public class TodoServiceImpl implements TodoService {
         return todosResponses;
     }
 
+    public Slice<Goal> getGoalsPagination(int userId, ReadTodoCompleteWithGoalRequest request, Pageable pageable){
+        Slice<Goal> goals;
+        if (Objects.isNull(request.lastGoalId()) || request.lastGoalId() <= 0) {
+            goals = goalRepository.findByUser_UserId(userId, pageable);
+        } else {
+            goals = goalRepository.findByGoalIdAndUser_UserId(request.lastGoalId(), userId, pageable);
+        }
+
+        return goals;
+    }
 }
