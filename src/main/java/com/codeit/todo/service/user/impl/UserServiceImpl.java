@@ -4,6 +4,7 @@ import com.codeit.todo.common.config.JwtTokenProvider;
 import com.codeit.todo.common.exception.ApplicationException;
 import com.codeit.todo.common.exception.payload.ErrorStatus;
 import com.codeit.todo.common.exception.user.SignUpException;
+import com.codeit.todo.common.exception.user.UpdatePasswordException;
 import com.codeit.todo.common.exception.user.UserNotFoundException;
 import com.codeit.todo.domain.User;
 import com.codeit.todo.repository.UserRepository;
@@ -11,9 +12,11 @@ import com.codeit.todo.service.storage.StorageService;
 import com.codeit.todo.service.user.UserService;
 import com.codeit.todo.web.dto.request.auth.LoginRequest;
 import com.codeit.todo.web.dto.request.auth.SignUpRequest;
+import com.codeit.todo.web.dto.request.auth.UpdatePasswordRequest;
 import com.codeit.todo.web.dto.request.auth.UpdatePictureRequest;
 import com.codeit.todo.web.dto.response.auth.ReadUserResponse;
 import com.codeit.todo.web.dto.response.auth.SignUpResponse;
+import com.codeit.todo.web.dto.response.auth.UpdatePasswordResponse;
 import com.codeit.todo.web.dto.response.auth.UpdatePictureResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -40,6 +43,8 @@ public class UserServiceImpl implements UserService {
     private static final int CONFLICT = 409;
 
     private static final int BAD_REQUEST = 400;
+    private static final int UNAUTHORIZED = 401;
+
 
     @Transactional
     @Override
@@ -113,10 +118,34 @@ public class UserServiceImpl implements UserService {
         return new UpdatePictureResponse(userId);
     }
 
+    @Transactional
+    @Override
+    public UpdatePasswordResponse updatePassword(int userId, UpdatePasswordRequest passwordRequest) {
+        User user = getUser(userId);
+
+        //현재 비밀번호 확인
+        String dbPassword = user.getPassword();
+        String currentPassword = passwordRequest.currentPassword();
+        if(!passwordEncoder.matches(currentPassword, dbPassword)) throw new UpdatePasswordException(ErrorStatus.toErrorStatus("현재 비밀번호가 일치하지 않습니다", UNAUTHORIZED));
+
+        passwordMatchValidation(passwordRequest.newPassword(), passwordRequest.newPasswordCheck());
+
+        //비밀번호 암호화
+        String encodedPassword = passwordEncoder.encode(passwordRequest.newPassword());
+        user.updatePassword(encodedPassword);
+
+        return new UpdatePasswordResponse(userId);
+    }
+
     private User getUser(int userId){
         User user = userRepository.findById(userId)
                 .orElseThrow(()-> new UserNotFoundException(String.valueOf(userId), "User"));
         return user;
+    }
+
+    //비밀번호, 비밀번호 확인이 일치하는지 확인
+    private void passwordMatchValidation(String password, String passwordCheck){
+        if(!password.equals(passwordCheck)) throw new UpdatePasswordException(ErrorStatus.toErrorStatus("비밀번호가 일치하지 않습니다", BAD_REQUEST));
     }
 
 

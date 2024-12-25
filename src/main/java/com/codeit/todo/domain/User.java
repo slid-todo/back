@@ -51,4 +51,8 @@ public class User {
     public void updateProfilePic(String completePicUrl){
         this.profilePic = completePicUrl;
     }
+
+    public void updatePassword(String password){
+        this.password = password;
+    }
 }
