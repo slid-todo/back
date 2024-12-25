@@ -106,9 +106,10 @@ public class TodoServiceImpl implements TodoService {
 
     @Transactional(readOnly = true)
     @Override
-    public Slice<ReadTodosWithGoalsResponse> findTodoListWithGoals(int userId, @Valid ReadDashBoardTodoWithGoalRequest request) {
+    public Slice<ReadTodosWithGoalsResponse> findTodoListWithGoals(int userId, @Valid ReadTodoCompleteWithGoalRequest request) {
         int pageSize = request.size();
         Pageable pageable = PageRequest.of(0, pageSize);
+
 
         Slice<Goal> goals;
         LocalDate today = LocalDate.now();
@@ -122,7 +123,6 @@ public class TodoServiceImpl implements TodoService {
         List<ReadTodosWithGoalsResponse> responses = goals.getContent().stream()
                 .map(goal -> {
                     List<Todo> todos = goal.getTodos();
-
                     List<ReadTodosResponse> todosResponses = todos.stream()
                             .map(todo -> {
                                 List<Complete> completes = todo.getCompletes();
@@ -270,7 +270,7 @@ public class TodoServiceImpl implements TodoService {
                 }).toList();
     }
 
-    private double calculateGoalProgress(List<Todo> todos) {
+    public double calculateGoalProgress(List<Todo> todos) {
         long totalCompletes = 0;
         long completedCompletes = 0;
 
@@ -283,5 +283,31 @@ public class TodoServiceImpl implements TodoService {
         }
 
         return totalCompletes > 0 ? (completedCompletes / (double) totalCompletes) * 100 : 0;
+    }
+
+    public List<ReadTodosResponse> makeTodosResponses(List<Todo> todos){
+        List<ReadTodosResponse> todosResponses = todos.stream()
+                .map(todo -> {
+                    List<Complete> completes = completeRepository.findByTodo_TodoId(todo.getTodoId());
+
+                    List<ReadCompleteResponse> completeResponses = completes.stream()
+                            .map(ReadCompleteResponse::from)
+                            .toList();
+
+                    return ReadTodosResponse.from(todo, completeResponses);
+                }).toList();
+
+        return todosResponses;
+    }
+
+    public Slice<Goal> getGoalsPagination(int userId, ReadTodoCompleteWithGoalRequest request, Pageable pageable){
+        Slice<Goal> goals;
+        if (Objects.isNull(request.lastGoalId()) || request.lastGoalId() <= 0) {
+            goals = goalRepository.findByUser_UserId(userId, pageable);
+        } else {
+            goals = goalRepository.findByGoalIdAndUser_UserId(request.lastGoalId(), userId, pageable);
+        }
+
+        return goals;
     }
 }

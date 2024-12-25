@@ -6,22 +6,15 @@ import com.codeit.todo.service.user.UserService;
 import com.codeit.todo.web.dto.request.auth.LoginRequest;
 import com.codeit.todo.web.dto.request.auth.SignUpRequest;
 import com.codeit.todo.web.dto.request.auth.UpdatePictureRequest;
-import com.codeit.todo.web.dto.request.complete.UpdateCompleteRequest;
 import com.codeit.todo.web.dto.response.Response;
-import com.codeit.todo.web.dto.response.auth.ReadUserResponse;
 import com.codeit.todo.web.dto.response.auth.UpdatePictureResponse;
-import com.codeit.todo.web.dto.response.complete.UpdateCompleteResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -33,7 +26,7 @@ public class AuthController {
     private final JwtTokenProvider jwtTokenProvider;
 
 
-    @Transactional
+
     @Operation(summary = "회원가입", description = "이름, 이메일, 비밀번호로 회원가입")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "회원가입 성공")
@@ -66,7 +59,7 @@ public class AuthController {
         return Response.ok( userService.findUserInfo(userId) );
     }
 
-    @Transactional
+
     @Operation(
             summary = "프로필 사진 수정",
             description = "유저가 원하는 사진을 골라 프로필 사진을 수정"
