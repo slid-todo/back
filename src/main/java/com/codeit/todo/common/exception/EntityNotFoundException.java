@@ -29,4 +29,5 @@ public class EntityNotFoundException extends ApplicationException{
         this.request = request;
         this.entityType = entityType;
     }
+
 }
