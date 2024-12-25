@@ -38,4 +38,6 @@ and g.goalId = :lastGoalId
 and :today between t.startDate and t.endDate
 """)
     Slice<Goal> findByUserAndHasTodosAfterLastGoalId(@Param("lastGoalId") Integer lastGoalId, @Param("userId") int userId, Pageable pageable,  @Param("today") LocalDate today);
+
+    List<Goal> findByGoalTitleContains(@Param("keyword") String keyword);
 }
