@@ -111,19 +111,21 @@ public class TodoServiceImpl implements TodoService {
         Pageable pageable = PageRequest.of(0, pageSize);
 
         Slice<Goal> goals;
+        LocalDate today = LocalDate.now();
+
         if (Objects.isNull(request.lastGoalId()) || request.lastGoalId() <= 0) {
-            goals = goalRepository.findByUser_UserId(userId, pageable);
+            goals = goalRepository.findByUserAndHasTodos(userId, pageable, today);
         } else {
-            goals = goalRepository.findByGoalIdAndUser_UserId(request.lastGoalId(), userId, pageable);
+            goals = goalRepository.findByUserAndHasTodosAfterLastGoalId(request.lastGoalId(), userId, pageable, today);
         }
 
         List<ReadTodosWithGoalsResponse> responses = goals.getContent().stream()
                 .map(goal -> {
-                    List<Todo> todos = todoRepository.findTodosByGoalIdBetweenDates(goal.getGoalId(), LocalDate.now());
+                    List<Todo> todos = goal.getTodos();
 
                     List<ReadTodosResponse> todosResponses = todos.stream()
                             .map(todo -> {
-                                List<Complete> completes = completeRepository.findByTodo_TodoId(todo.getTodoId());
+                                List<Complete> completes = todo.getCompletes();
 
                                 List<ReadCompleteResponse> completeResponses = completes.stream()
                                         .map(ReadCompleteResponse::from)
