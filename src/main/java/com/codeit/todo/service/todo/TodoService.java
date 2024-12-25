@@ -12,7 +12,7 @@ public interface TodoService {
 
     CreateTodoResponse saveTodo(int userId, CreateTodoRequest request);
 
-    Slice<ReadTodosWithGoalsResponse> findTodoListWithGoals(int userId, ReadDashBoardTodoWithGoalRequest request);
+    Slice<ReadTodosWithGoalsResponse> findTodoListWithGoals(int userId, ReadTodoCompleteWithGoalRequest request);
 
     Slice<ReadTodoWithGoalResponse> findTodoListWithGoal(int userId, int goalId, ReadTodoWithGoalRequest request);
 
