@@ -54,12 +54,10 @@ public class UserServiceImpl implements UserService {
         if(userRepository.findByEmail(email).isPresent()) throw new SignUpException(ErrorStatus.toErrorStatus("이미 존재하는 이메일입니다", CONFLICT));
 
         //비밀번호, 비밀번호 확인이 일치하는지 확인
-        String password = request.password();
-        String passwordCheck = request.passwordCheck();
-        if(!password.equals(passwordCheck)) throw new SignUpException(ErrorStatus.toErrorStatus("비밀번호가 일치하지 않습니다", BAD_REQUEST));
+        passwordMatchValidation(request.password(), request.passwordCheck());
 
         //비밀번호 암호화
-        String encodedPassword = passwordEncoder.encode(password);
+        String encodedPassword = passwordEncoder.encode(request.password());
 
         //회원가입 시 기본 프로필 이미지 등록
         String profilePic = "https://slid-todo.s3.ap-northeast-2.amazonaws.com/auth/default_profilepic_mouse.png";
