@@ -31,6 +31,9 @@ public class User {
     @Column(name = "profile_pic", nullable = false)
     private String profilePic;
 
+    @OneToMany(mappedBy= "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Goal> goals = new ArrayList<>();
+
     //나를 팔로우 하는 사람들
     @OneToMany(mappedBy = "followee", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Follow> followers = new ArrayList<>();
