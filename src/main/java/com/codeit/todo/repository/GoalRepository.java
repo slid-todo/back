@@ -34,7 +34,7 @@ select g
 from Goal g
 join fetch g.todos t
 where g.user.userId = :userId
-and g.goalId = :lastGoalId
+and g.goalId > :lastGoalId
 and :today between t.startDate and t.endDate
 """)
     Slice<Goal> findByUserAndHasTodosAfterLastGoalId(@Param("lastGoalId") Integer lastGoalId, @Param("userId") int userId, Pageable pageable,  @Param("today") LocalDate today);

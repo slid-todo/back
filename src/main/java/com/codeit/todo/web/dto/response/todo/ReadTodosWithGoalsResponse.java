@@ -11,6 +11,7 @@ public record ReadTodosWithGoalsResponse(
         String goalTitle,
         String goalColor,
         double progress,
+        int nextCursor,
         List<ReadTodosResponse> todos
 ) {
     public static ReadTodosWithGoalsResponse from(Goal goal, List<ReadTodosResponse> responses, double goalProgress) {
