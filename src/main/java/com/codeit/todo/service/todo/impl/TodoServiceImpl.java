@@ -13,8 +13,8 @@ import com.codeit.todo.service.storage.StorageService;
 import com.codeit.todo.service.todo.TodoService;
 import com.codeit.todo.web.dto.request.todo.*;
 import com.codeit.todo.web.dto.response.complete.ReadCompleteResponse;
+import com.codeit.todo.web.dto.response.slice.CustomSlice;
 import com.codeit.todo.web.dto.response.todo.*;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -106,7 +106,7 @@ public class TodoServiceImpl implements TodoService {
 
     @Transactional(readOnly = true)
     @Override
-    public Slice<ReadTodosWithGoalsResponse> findTodoListWithGoals(int userId, @Valid ReadTodoCompleteWithGoalRequest request) {
+    public Slice<ReadTodosWithGoalsResponse> findTodoListWithGoals(int userId, ReadTodoCompleteWithGoalRequest request) {
         int pageSize = request.size();
         Pageable pageable = PageRequest.of(0, pageSize);
 
@@ -130,7 +130,11 @@ public class TodoServiceImpl implements TodoService {
                 })
                 .toList();
 
-        return new SliceImpl<>(responses, pageable, goals.hasNext());
+        Integer nextCursor = goals.hasNext()
+                ? goals.getContent().get(goals.getContent().size() - 1).getGoalId()
+                : null;
+
+        return new CustomSlice<>(responses, pageable, goals.hasNext(), nextCursor);
     }
 
     @Transactional(readOnly = true)
