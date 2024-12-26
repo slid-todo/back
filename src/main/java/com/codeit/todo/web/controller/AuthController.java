@@ -5,8 +5,10 @@ import com.codeit.todo.repository.CustomUserDetails;
 import com.codeit.todo.service.user.UserService;
 import com.codeit.todo.web.dto.request.auth.LoginRequest;
 import com.codeit.todo.web.dto.request.auth.SignUpRequest;
+import com.codeit.todo.web.dto.request.auth.UpdatePasswordRequest;
 import com.codeit.todo.web.dto.request.auth.UpdatePictureRequest;
 import com.codeit.todo.web.dto.response.Response;
+import com.codeit.todo.web.dto.response.auth.UpdatePasswordResponse;
 import com.codeit.todo.web.dto.response.auth.UpdatePictureResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -23,9 +25,6 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final UserService userService;
-    private final JwtTokenProvider jwtTokenProvider;
-
-
 
     @Operation(summary = "회원가입", description = "이름, 이메일, 비밀번호로 회원가입")
     @ApiResponses(value = {
@@ -74,5 +73,21 @@ public class AuthController {
             ) {
         int userId = userDetails.getUserId();
         return Response.ok(userService.updateProfilePicture(userId, pictureRequest));
+    }
+
+    @Operation(
+            summary = "비밀번호 변정",
+            description = "기존 비밀번호를 확인하고, 새로운 비밀번호로 변경"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "변경 성공")
+    })
+    @PutMapping("/password")
+    public Response<UpdatePasswordResponse> updateUserPassword(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestBody UpdatePasswordRequest passwordRequest
+            ) {
+        int userId = userDetails.getUserId();
+        return Response.ok(userService.updatePassword(userId, passwordRequest));
     }
 }
