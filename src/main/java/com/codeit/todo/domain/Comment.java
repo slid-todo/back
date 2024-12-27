@@ -38,4 +38,8 @@ public class Comment {
         this.user = user;
         this.complete = complete;
     }
+
+    public void update(String content){
+        this.content = content;
+    }
 }
