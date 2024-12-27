@@ -162,7 +162,7 @@ public class UserServiceImpl implements UserService {
         return ReadMyPageResponse.from(followerCount, followeeCount);
     }
 
-    private User getUser(int userId){
+    public User getUser(int userId){
         User user = userRepository.findById(userId)
                 .orElseThrow(()-> new UserNotFoundException(String.valueOf(userId), "User"));
         return user;
