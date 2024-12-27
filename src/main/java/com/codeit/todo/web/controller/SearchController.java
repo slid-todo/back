@@ -12,10 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -32,7 +29,7 @@ public class SearchController {
     })
     @GetMapping
     public Response<List<ReadSearchResponse>> getSearch(
-            @Valid @RequestBody ReadSearchRequest request
+            @Valid @ModelAttribute ReadSearchRequest request
             ){
         return Response.ok(searchService.findUserAndGoal(request));
     }
