@@ -6,7 +6,12 @@ import com.codeit.todo.common.exception.payload.ErrorStatus;
 import com.codeit.todo.common.exception.user.SignUpException;
 import com.codeit.todo.common.exception.user.UpdatePasswordException;
 import com.codeit.todo.common.exception.user.UserNotFoundException;
+import com.codeit.todo.domain.Complete;
+import com.codeit.todo.domain.Todo;
 import com.codeit.todo.domain.User;
+import com.codeit.todo.repository.CompleteRepository;
+import com.codeit.todo.repository.FollowRepository;
+import com.codeit.todo.repository.GoalRepository;
 import com.codeit.todo.repository.UserRepository;
 import com.codeit.todo.service.storage.StorageService;
 import com.codeit.todo.service.user.UserService;
@@ -14,10 +19,8 @@ import com.codeit.todo.web.dto.request.auth.LoginRequest;
 import com.codeit.todo.web.dto.request.auth.SignUpRequest;
 import com.codeit.todo.web.dto.request.auth.UpdatePasswordRequest;
 import com.codeit.todo.web.dto.request.auth.UpdatePictureRequest;
-import com.codeit.todo.web.dto.response.auth.ReadUserResponse;
-import com.codeit.todo.web.dto.response.auth.SignUpResponse;
-import com.codeit.todo.web.dto.response.auth.UpdatePasswordResponse;
-import com.codeit.todo.web.dto.response.auth.UpdatePictureResponse;
+import com.codeit.todo.web.dto.response.auth.*;
+import com.codeit.todo.web.dto.response.complete.ReadTargetUserCompleteResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,12 +32,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SignatureException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final GoalRepository goalRepository;
+    private final FollowRepository followRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
@@ -133,6 +139,23 @@ public class UserServiceImpl implements UserService {
         user.updatePassword(encodedPassword);
 
         return new UpdatePasswordResponse(userId);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public ReadTargetUserResponse findTargetUserProfile(int userId, int targetUserId) {
+        User targetUser = getUser(targetUserId);
+
+        boolean isFollow = followRepository.existsByFollower_FollowerIdAndFollowee_FolloweeId(userId, targetUserId);
+
+        List<ReadTargetUserCompleteResponse> responses = goalRepository.findByUser_UserId(targetUserId).stream()
+                .flatMap(goal -> goal.getTodos().stream())
+                .flatMap(todo -> todo.getCompletes().stream())
+                .map(ReadTargetUserCompleteResponse::from)
+                .toList();
+
+        return ReadTargetUserResponse.from(targetUser, isFollow, responses);
+
     }
 
     private User getUser(int userId){

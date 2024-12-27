@@ -1,6 +1,5 @@
 package com.codeit.todo.web.controller;
 
-import com.codeit.todo.common.config.JwtTokenProvider;
 import com.codeit.todo.repository.CustomUserDetails;
 import com.codeit.todo.service.user.UserService;
 import com.codeit.todo.web.dto.request.auth.LoginRequest;
@@ -8,6 +7,7 @@ import com.codeit.todo.web.dto.request.auth.SignUpRequest;
 import com.codeit.todo.web.dto.request.auth.UpdatePasswordRequest;
 import com.codeit.todo.web.dto.request.auth.UpdatePictureRequest;
 import com.codeit.todo.web.dto.response.Response;
+import com.codeit.todo.web.dto.response.auth.ReadTargetUserResponse;
 import com.codeit.todo.web.dto.response.auth.UpdatePasswordResponse;
 import com.codeit.todo.web.dto.response.auth.UpdatePictureResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -89,5 +89,18 @@ public class AuthController {
             ) {
         int userId = userDetails.getUserId();
         return Response.ok(userService.updatePassword(userId, passwordRequest));
+    }
+
+    @Operation(summary = "다른 유저의 프로필 가져오기", description = "다른 유저의 이름, 이메일, 팔로우 여부,  인증 사진 가져오기")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공")
+    })
+    @GetMapping(value = "/profile/{targetUserId}")
+    public Response<ReadTargetUserResponse> getTargetUserProfile(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @PathVariable int targetUserId
+            ){
+        int userId = customUserDetails.getUserId();
+        return Response.ok( userService.findTargetUserProfile(userId, targetUserId) );
     }
 }

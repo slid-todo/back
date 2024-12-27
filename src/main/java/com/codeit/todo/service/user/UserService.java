@@ -4,10 +4,7 @@ import com.codeit.todo.web.dto.request.auth.LoginRequest;
 import com.codeit.todo.web.dto.request.auth.SignUpRequest;
 import com.codeit.todo.web.dto.request.auth.UpdatePasswordRequest;
 import com.codeit.todo.web.dto.request.auth.UpdatePictureRequest;
-import com.codeit.todo.web.dto.response.auth.ReadUserResponse;
-import com.codeit.todo.web.dto.response.auth.SignUpResponse;
-import com.codeit.todo.web.dto.response.auth.UpdatePasswordResponse;
-import com.codeit.todo.web.dto.response.auth.UpdatePictureResponse;
+import com.codeit.todo.web.dto.response.auth.*;
 
 public interface UserService {
 
@@ -20,4 +17,6 @@ public interface UserService {
     UpdatePictureResponse updateProfilePicture(int userId, UpdatePictureRequest pictureRequest);
 
     UpdatePasswordResponse updatePassword(int userId, UpdatePasswordRequest passwordRequest);
+
+    ReadTargetUserResponse findTargetUserProfile(int userId, int targetUserId);
 }
