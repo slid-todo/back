@@ -93,11 +93,10 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Transactional(readOnly = true)
     @Override
     public ReadUserResponse findUserInfo(int userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(()-> new UserNotFoundException(String.valueOf(userId), "User"));
-
+        User user = getUser(userId);
         return ReadUserResponse.from(user);
     }
 
