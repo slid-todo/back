@@ -7,6 +7,7 @@ import com.codeit.todo.web.dto.request.auth.SignUpRequest;
 import com.codeit.todo.web.dto.request.auth.UpdatePasswordRequest;
 import com.codeit.todo.web.dto.request.auth.UpdatePictureRequest;
 import com.codeit.todo.web.dto.response.Response;
+import com.codeit.todo.web.dto.response.auth.ReadMyPageResponse;
 import com.codeit.todo.web.dto.response.auth.ReadTargetUserResponse;
 import com.codeit.todo.web.dto.response.auth.UpdatePasswordResponse;
 import com.codeit.todo.web.dto.response.auth.UpdatePictureResponse;
@@ -76,7 +77,7 @@ public class AuthController {
     }
 
     @Operation(
-            summary = "비밀번호 변정",
+            summary = "비밀번호 변경",
             description = "기존 비밀번호를 확인하고, 새로운 비밀번호로 변경"
     )
     @ApiResponses(value = {
@@ -103,4 +104,16 @@ public class AuthController {
         int userId = customUserDetails.getUserId();
         return Response.ok( userService.findTargetUserProfile(userId, targetUserId) );
     }
+
+
+    @Operation(summary = "마이페이지 가져오기", description = "유저 정보, 팔로워 팔로이 수 가져오기")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공")
+    })
+    @GetMapping(value = "/mypage")
+    public Response<ReadMyPageResponse> getMyPage(@AuthenticationPrincipal CustomUserDetails customUserDetails){
+        int userId = customUserDetails.getUserId();
+        return Response.ok( userService.findUserInfoAndFollows(userId));
+    }
+
 }

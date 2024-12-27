@@ -19,4 +19,6 @@ public interface UserService {
     UpdatePasswordResponse updatePassword(int userId, UpdatePasswordRequest passwordRequest);
 
     ReadTargetUserResponse findTargetUserProfile(int userId, int targetUserId);
+
+    ReadMyPageResponse findUserInfoAndFollows(int userId);
 }

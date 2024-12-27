@@ -6,10 +6,7 @@ import com.codeit.todo.common.exception.payload.ErrorStatus;
 import com.codeit.todo.common.exception.user.SignUpException;
 import com.codeit.todo.common.exception.user.UpdatePasswordException;
 import com.codeit.todo.common.exception.user.UserNotFoundException;
-import com.codeit.todo.domain.Complete;
-import com.codeit.todo.domain.Todo;
 import com.codeit.todo.domain.User;
-import com.codeit.todo.repository.CompleteRepository;
 import com.codeit.todo.repository.FollowRepository;
 import com.codeit.todo.repository.GoalRepository;
 import com.codeit.todo.repository.UserRepository;
@@ -30,7 +27,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.security.SignatureException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -97,11 +93,10 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Transactional(readOnly = true)
     @Override
     public ReadUserResponse findUserInfo(int userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(()-> new UserNotFoundException(String.valueOf(userId), "User"));
-
+        User user = getUser(userId);
         return ReadUserResponse.from(user);
     }
 
@@ -156,6 +151,15 @@ public class UserServiceImpl implements UserService {
 
         return ReadTargetUserResponse.from(targetUser, isFollow, responses);
 
+    }
+
+    @Override
+    public ReadMyPageResponse findUserInfoAndFollows(int userId) {
+
+        int followerCount = followRepository.countByFollower(userId);
+        int followeeCount = followRepository.countByFollowee(userId);
+
+        return ReadMyPageResponse.from(followerCount, followeeCount);
     }
 
     private User getUser(int userId){
