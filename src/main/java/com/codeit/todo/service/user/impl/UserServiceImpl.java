@@ -6,7 +6,9 @@ import com.codeit.todo.common.exception.payload.ErrorStatus;
 import com.codeit.todo.common.exception.user.SignUpException;
 import com.codeit.todo.common.exception.user.UpdatePasswordException;
 import com.codeit.todo.common.exception.user.UserNotFoundException;
+import com.codeit.todo.domain.Follow;
 import com.codeit.todo.domain.User;
+import com.codeit.todo.repository.FollowRepository;
 import com.codeit.todo.repository.UserRepository;
 import com.codeit.todo.service.storage.StorageService;
 import com.codeit.todo.service.user.UserService;
@@ -14,10 +16,7 @@ import com.codeit.todo.web.dto.request.auth.LoginRequest;
 import com.codeit.todo.web.dto.request.auth.SignUpRequest;
 import com.codeit.todo.web.dto.request.auth.UpdatePasswordRequest;
 import com.codeit.todo.web.dto.request.auth.UpdatePictureRequest;
-import com.codeit.todo.web.dto.response.auth.ReadUserResponse;
-import com.codeit.todo.web.dto.response.auth.SignUpResponse;
-import com.codeit.todo.web.dto.response.auth.UpdatePasswordResponse;
-import com.codeit.todo.web.dto.response.auth.UpdatePictureResponse;
+import com.codeit.todo.web.dto.response.auth.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -35,6 +34,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final FollowRepository followRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
@@ -133,6 +133,17 @@ public class UserServiceImpl implements UserService {
         user.updatePassword(encodedPassword);
 
         return new UpdatePasswordResponse(userId);
+    }
+
+    @Override
+    public ReadMyPageResponse findUserInfoAndFollows(int userId) {
+        User user = getUser(userId);
+
+        int followerCount = followRepository.countByFollower(userId);
+        int followeeCount = followRepository.countByFollowee(userId);
+
+
+        return ReadMyPageResponse.from(user, followerCount, followeeCount);
     }
 
     private User getUser(int userId){
