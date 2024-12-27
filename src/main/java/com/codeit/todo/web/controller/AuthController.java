@@ -1,6 +1,5 @@
 package com.codeit.todo.web.controller;
 
-import com.codeit.todo.common.config.JwtTokenProvider;
 import com.codeit.todo.repository.CustomUserDetails;
 import com.codeit.todo.service.user.UserService;
 import com.codeit.todo.web.dto.request.auth.LoginRequest;

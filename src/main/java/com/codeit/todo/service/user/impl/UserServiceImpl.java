@@ -156,13 +156,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ReadMyPageResponse findUserInfoAndFollows(int userId) {
-        User user = getUser(userId);
 
         int followerCount = followRepository.countByFollower(userId);
         int followeeCount = followRepository.countByFollowee(userId);
 
-
-        return ReadMyPageResponse.from(user, followerCount, followeeCount);
+        return ReadMyPageResponse.from(followerCount, followeeCount);
     }
 
     private User getUser(int userId){
