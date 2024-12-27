@@ -6,5 +6,5 @@ import com.codeit.todo.web.dto.response.search.ReadSearchResponse;
 import java.util.List;
 
 public interface SearchService {
-    List<ReadSearchResponse> findUserAndGoal(ReadSearchRequest request);
+    List<ReadSearchResponse> findUserAndGoal(int userId, ReadSearchRequest request);
 }

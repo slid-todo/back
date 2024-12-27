@@ -28,7 +28,6 @@ public class SecurityConfig {
                 authorizeRequests
                         .requestMatchers("/signup").permitAll()
                     .requestMatchers("/login").permitAll()
-                        .requestMatchers("/searches").permitAll()
                     .requestMatchers("/swagger-ui/**").permitAll()
                     .requestMatchers("/**").permitAll()
                         .anyRequest().authenticated()

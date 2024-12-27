@@ -37,7 +37,7 @@ public class SearchServiceImpl implements SearchService {
     private static final int NOT_FOUND = 404;
 
     @Override
-    public List<ReadSearchResponse> findUserAndGoal(ReadSearchRequest request) {
+    public List<ReadSearchResponse> findUserAndGoal(int userId, ReadSearchRequest request) {
         String searchField = request.searchField();
         String keyword = request.keyword();
 
