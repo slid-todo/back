@@ -29,8 +29,10 @@ public class SearchController {
     })
     @GetMapping
     public Response<List<ReadSearchResponse>> getSearch(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
             @Valid @ModelAttribute ReadSearchRequest request
             ){
-        return Response.ok(searchService.findUserAndGoal(request));
+        int userId = userDetails.getUserId();
+        return Response.ok(searchService.findUserAndGoal(userId, request));
     }
 }
