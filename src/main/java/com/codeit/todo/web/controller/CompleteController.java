@@ -51,6 +51,6 @@ public class CompleteController {
             @PathVariable int completeId
     ) {
         int userId = userDetails.getUserId();
-        return Response.ok(completeService.readComplete(userId, completeId));
+        return Response.ok(completeService.readComplete(completeId, userId));
     }
 }
