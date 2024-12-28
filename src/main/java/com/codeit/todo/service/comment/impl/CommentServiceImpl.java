@@ -14,6 +14,7 @@ import com.codeit.todo.service.user.impl.UserServiceImpl;
 import com.codeit.todo.web.dto.request.comment.CreateCommentRequest;
 import com.codeit.todo.web.dto.request.comment.UpdateCommentRequest;
 import com.codeit.todo.web.dto.response.comment.CreateCommentResponse;
+import com.codeit.todo.web.dto.response.comment.DeleteCommentResponse;
 import com.codeit.todo.web.dto.response.comment.UpdateCommentResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,13 +52,21 @@ public class CommentServiceImpl implements CommentService {
         return UpdateCommentResponse.fromEntity(comment);
     }
 
+    @Transactional
+    @Override
+    public DeleteCommentResponse deleteComment(int userId, int commentId) {
+        Comment comment = getComment(userId, commentId);
+        commentRepository.delete(comment);
+        return DeleteCommentResponse.from(commentId);
+    }
+
     private Comment getComment(int userId, int commentId){
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(()-> new CommentNotFoundException(String.valueOf(commentId)));
 
         if(comment.getUser().getUserId() != userId){
-            log.error("댓글 수정 작업 거부됨. 요청 유저 ID : {}", userId);
-            throw new AuthorizationDeniedException("댓글 수정에 대한 권한이 없습니다.");
+            log.error("댓글 작업 거부됨. 요청 유저 ID : {}", userId);
+            throw new AuthorizationDeniedException("댓글 작업에 대한 권한이 없습니다.");
         }
 
         return comment;

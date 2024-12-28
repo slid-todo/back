@@ -6,6 +6,7 @@ import com.codeit.todo.web.dto.request.comment.CreateCommentRequest;
 import com.codeit.todo.web.dto.request.comment.UpdateCommentRequest;
 import com.codeit.todo.web.dto.response.Response;
 import com.codeit.todo.web.dto.response.comment.CreateCommentResponse;
+import com.codeit.todo.web.dto.response.comment.DeleteCommentResponse;
 import com.codeit.todo.web.dto.response.comment.UpdateCommentResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -47,5 +48,18 @@ public class CommentController {
     ){
         int userId = customUserDetails.getUserId();
         return Response.ok(commentService.updateComment(userId, commentId, request));
+    }
+
+    @Operation(summary = "댓글 삭제", description = "댓글 삭제 API")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "삭제 성공")
+    })
+    @DeleteMapping("{commentId}")
+    public Response<DeleteCommentResponse> deleteComment(
+            @PathVariable int commentId,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ){
+        int userId = customUserDetails.getUserId();
+        return Response.ok(commentService.deleteComment(userId, commentId));
     }
 }
