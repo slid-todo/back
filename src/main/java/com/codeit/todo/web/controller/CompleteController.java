@@ -5,7 +5,6 @@ import com.codeit.todo.service.complete.CompleteService;
 import com.codeit.todo.web.dto.request.complete.UpdateCompleteRequest;
 import com.codeit.todo.web.dto.response.Response;
 import com.codeit.todo.web.dto.response.complete.ReadCompleteDetailResponse;
-import com.codeit.todo.web.dto.response.complete.ReadCompleteResponse;
 import com.codeit.todo.web.dto.response.complete.UpdateCompleteResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
