@@ -162,6 +162,19 @@ public class UserServiceImpl implements UserService {
         return ReadMyPageResponse.from(followerCount, followeeCount);
     }
 
+    @Transactional
+    @Override
+    public UpdateUserStatusResponse updateUserStatus(int userId) {
+        User user = getUser(userId);
+        user.updateStatus();
+
+        followRepository.deleteByFolloweeUserId(userId);
+        followRepository.deleteByFollowerUserId(userId);
+        goalRepository.deleteByUserId(userId);
+
+        return UpdateUserStatusResponse.from(userId);
+    }
+
     public User getUser(int userId){
         User user = userRepository.findById(userId)
                 .orElseThrow(()-> new UserNotFoundException(String.valueOf(userId), "User"));

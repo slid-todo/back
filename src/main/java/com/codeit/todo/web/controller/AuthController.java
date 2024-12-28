@@ -7,10 +7,7 @@ import com.codeit.todo.web.dto.request.auth.SignUpRequest;
 import com.codeit.todo.web.dto.request.auth.UpdatePasswordRequest;
 import com.codeit.todo.web.dto.request.auth.UpdatePictureRequest;
 import com.codeit.todo.web.dto.response.Response;
-import com.codeit.todo.web.dto.response.auth.ReadMyPageResponse;
-import com.codeit.todo.web.dto.response.auth.ReadTargetUserResponse;
-import com.codeit.todo.web.dto.response.auth.UpdatePasswordResponse;
-import com.codeit.todo.web.dto.response.auth.UpdatePictureResponse;
+import com.codeit.todo.web.dto.response.auth.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -114,6 +111,21 @@ public class AuthController {
     public Response<ReadMyPageResponse> getMyPage(@AuthenticationPrincipal CustomUserDetails customUserDetails){
         int userId = customUserDetails.getUserId();
         return Response.ok( userService.findUserInfoAndFollows(userId));
+    }
+
+    @Operation(
+            summary = "회원 탈퇴",
+            description = "user_status를 '탈퇴'로 변경하고 목표, 할일, 인증, 좋아요, 댓글, 팔로워, 팔로이를 모두 삭제"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "탈퇴 성공")
+    })
+    @PutMapping("/withdrawl")
+    public Response<UpdateUserStatusResponse> userWithdraw(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        int userId = userDetails.getUserId();
+        return Response.ok(userService.updateUserStatus(userId));
     }
 
 }

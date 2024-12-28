@@ -4,6 +4,7 @@ import com.codeit.todo.domain.Goal;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -40,4 +41,9 @@ and :today between t.startDate and t.endDate
     Slice<Goal> findByUserAndHasTodosAfterLastGoalId(@Param("lastGoalId") Integer lastGoalId, @Param("userId") int userId, Pageable pageable,  @Param("today") LocalDate today);
 
     List<Goal> findByGoalTitleContains(@Param("keyword") String keyword);
+
+    @Modifying
+    @Query("DELETE FROM Goal g " +
+            "WHERE g.user.userId = :userId")
+    void deleteByUserId(@Param("userId") int userId);
 }
