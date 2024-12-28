@@ -2,6 +2,7 @@ package com.codeit.todo.service.user.impl;
 
 import com.codeit.todo.common.config.JwtTokenProvider;
 import com.codeit.todo.common.exception.ApplicationException;
+import com.codeit.todo.common.exception.auth.AuthorizationDeniedException;
 import com.codeit.todo.common.exception.payload.ErrorStatus;
 import com.codeit.todo.common.exception.user.SignUpException;
 import com.codeit.todo.common.exception.user.UpdatePasswordException;
@@ -78,6 +79,7 @@ public class UserServiceImpl implements UserService {
         try{
             User user = userRepository.findByEmail(email)
                     .orElseThrow(()-> new UserNotFoundException(email, "User"));
+            if(user.getUserStatus().equals("탈퇴")) throw new AuthorizationDeniedException("탈퇴한 회원입니다. 로그인 권한이 없습니다. ");
 
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
             SecurityContextHolder.getContext().setAuthentication(authentication);
