@@ -4,20 +4,19 @@ import com.codeit.todo.common.exception.jwt.JwtException;
 import com.codeit.todo.common.exception.payload.ErrorStatus;
 import io.jsonwebtoken.*;
 import jakarta.annotation.PostConstruct;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 import java.util.Base64;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
@@ -91,4 +90,12 @@ public class JwtTokenProvider {
     }
 
 
+    private final Set<String> tokenBlackList = new HashSet<>();
+    public void addToBlackList(String currentToken) {
+        tokenBlackList.add(currentToken);
+    }
+
+    public boolean isTokenBlackListed(String jwtToken){
+        return tokenBlackList.contains(jwtToken);
+    }
 }

@@ -1,5 +1,6 @@
 package com.codeit.todo.web.controller;
 
+import com.codeit.todo.common.config.JwtTokenProvider;
 import com.codeit.todo.repository.CustomUserDetails;
 import com.codeit.todo.service.user.UserService;
 import com.codeit.todo.web.dto.request.auth.LoginRequest;
@@ -11,10 +12,12 @@ import com.codeit.todo.web.dto.response.auth.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final UserService userService;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Operation(summary = "회원가입", description = "이름, 이메일, 비밀번호로 회원가입")
     @ApiResponses(value = {
@@ -115,15 +119,19 @@ public class AuthController {
 
     @Operation(
             summary = "회원 탈퇴",
-            description = "user_status를 '탈퇴'로 변경하고 목표, 할일, 인증, 좋아요, 댓글, 팔로워, 팔로이를 모두 삭제"
+            description = "user_status를 '탈퇴'로 변경하고 목표, 할일, 인증, 좋아요, 댓글, 팔로워, 팔로이 모두 삭제"
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "탈퇴 성공")
     })
     @PutMapping("/withdrawl")
     public Response<UpdateUserStatusResponse> userWithdraw(
+            HttpServletRequest request,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
+        String currentToken = request.getHeader("token");
+        jwtTokenProvider.addToBlackList(currentToken);
+
         int userId = userDetails.getUserId();
         return Response.ok(userService.updateUserStatus(userId));
     }

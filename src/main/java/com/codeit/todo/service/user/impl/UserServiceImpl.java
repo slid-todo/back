@@ -8,9 +8,7 @@ import com.codeit.todo.common.exception.user.SignUpException;
 import com.codeit.todo.common.exception.user.UpdatePasswordException;
 import com.codeit.todo.common.exception.user.UserNotFoundException;
 import com.codeit.todo.domain.User;
-import com.codeit.todo.repository.FollowRepository;
-import com.codeit.todo.repository.GoalRepository;
-import com.codeit.todo.repository.UserRepository;
+import com.codeit.todo.repository.*;
 import com.codeit.todo.service.storage.StorageService;
 import com.codeit.todo.service.user.UserService;
 import com.codeit.todo.web.dto.request.auth.LoginRequest;
@@ -38,6 +36,8 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final GoalRepository goalRepository;
     private final FollowRepository followRepository;
+    private final LikesRepository likesRepository;
+    private final CommentRepository commentRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
@@ -79,13 +79,16 @@ public class UserServiceImpl implements UserService {
         try{
             User user = userRepository.findByEmail(email)
                     .orElseThrow(()-> new UserNotFoundException(email, "User"));
-            if(user.getUserStatus().equals("탈퇴")) throw new AuthorizationDeniedException("탈퇴한 회원입니다. 로그인 권한이 없습니다. ");
+            if(user.getUserStatus().equals("탈퇴")) throw new AuthorizationDeniedException("탈퇴한 회원입니다. 로그인 권한이 없습니다.");
 
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
             return jwtTokenProvider.createToken(email);
-        }catch(Exception e){
+        } catch(AuthorizationDeniedException e){
+            e.printStackTrace();
+            throw new AuthorizationDeniedException("탈퇴한 회원입니다. 로그인 권한이 없습니다.");
+        } catch(Exception e){
             e.printStackTrace();
             throw new ApplicationException(new ErrorStatus(
                     "로그인 과정에서 에러 발생",
@@ -172,7 +175,13 @@ public class UserServiceImpl implements UserService {
 
         followRepository.deleteByFolloweeUserId(userId);
         followRepository.deleteByFollowerUserId(userId);
-        goalRepository.deleteByUserId(userId);
+//        goalRepository.deleteByUserId(userId);
+
+        goalRepository.findByUser_UserId(userId).forEach(goalRepository::delete);
+        likesRepository.findByUser_UserId(userId).forEach(likesRepository::delete);
+        commentRepository.findByUser_UserId(userId).forEach(commentRepository::delete);
+
+
 
         return UpdateUserStatusResponse.from(userId);
     }
