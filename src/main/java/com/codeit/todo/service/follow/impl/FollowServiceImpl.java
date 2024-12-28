@@ -67,7 +67,7 @@ public class FollowServiceImpl implements FollowService {
 
     @Override
     public CreateFollowResponse registerFollow(int followerId, int followeeId) {
-        if (followRepository.existsByFollower_FollowerIdAndFollowee_FolloweeId(followeeId, followerId)) {
+        if (followRepository.existsByFollower_FollowerIdAndFollowee_FolloweeId(followerId, followeeId)) {
             throw new AuthorizationDeniedException("이미 팔로우로 등록한 회원입니다.");
         }
 
@@ -82,7 +82,7 @@ public class FollowServiceImpl implements FollowService {
 
     @Override
     public DeleteFollowResponse cancelFollow(int followerId, int followeeId) {
-        if (!followRepository.existsByFollower_FollowerIdAndFollowee_FolloweeId(followeeId, followerId)) {
+        if (!followRepository.existsByFollower_FollowerIdAndFollowee_FolloweeId(followerId, followeeId)) {
             throw new AuthorizationDeniedException("팔로우 내역이 존재하지 않습니다.");
         }
 
