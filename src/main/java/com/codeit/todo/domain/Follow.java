@@ -29,5 +29,10 @@ public class Follow {
         this.followee = followee;
     }
 
-
+    public static Follow from(User follower, User followee) {
+        return Follow.builder()
+                .follower(follower)
+                .followee(followee)
+                .build();
+    }
 }

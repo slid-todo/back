@@ -19,6 +19,7 @@ import com.codeit.todo.web.dto.request.goal.CreateGoalRequest;
 import com.codeit.todo.web.dto.response.goal.CreateGoalResponse;
 import com.codeit.todo.web.dto.response.goal.ReadGoalsResponse;
 import com.codeit.todo.web.dto.response.goal.UpdateGoalResponse;
+import com.codeit.todo.web.dto.response.slice.CustomSlice;
 import com.codeit.todo.web.dto.response.todo.ReadTodosResponse;
 import com.codeit.todo.web.dto.response.todo.ReadTodosWithGoalsResponse;
 import lombok.RequiredArgsConstructor;
@@ -124,7 +125,11 @@ public class GoalServiceImpl implements GoalService {
 
         List<ReadTodosWithGoalsResponse> sortedGoalsResponses = sortAllGoals(goalsResponses);
 
-        return new SliceImpl<>(sortedGoalsResponses, pageable, goals.hasNext());
+
+        Integer nextCursor = goals.hasNext()
+                ? goals.getContent().get(goals.getContent().size() -1).getGoalId()
+                : null;
+        return new CustomSlice<>(sortedGoalsResponses, pageable, goals.hasNext(), nextCursor);
     }
 
     private Slice<Goal> getGoalsPagination(int userId, ReadTodoCompleteWithGoalRequest request, Pageable pageable){

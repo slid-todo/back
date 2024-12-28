@@ -27,7 +27,6 @@ public class AuthController {
 
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
-
     @Operation(summary = "회원가입", description = "이름, 이메일, 비밀번호로 회원가입")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "회원가입 성공")

@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface FollowRepository extends JpaRepository<Follow, Integer> {
     @Query(
@@ -29,6 +30,8 @@ public interface FollowRepository extends JpaRepository<Follow, Integer> {
 
     @Query("select f.followee.userId from Follow f where f.follower.userId = :userId")
     List<Integer> findFolloweeIdsByFollowerId(@Param("userId") int userId);
+
+    Optional<Follow> findByFollower_UserIdAndFollowee_UserId(int followerId, int followeeId);
 
     @Modifying
     @Query

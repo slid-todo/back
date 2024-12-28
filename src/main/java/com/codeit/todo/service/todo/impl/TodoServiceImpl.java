@@ -291,15 +291,4 @@ public class TodoServiceImpl implements TodoService {
                     return ReadTodosResponse.from(todo, completeResponses);
                 }).toList();
     }
-
-    public Slice<Goal> getGoalsPagination(int userId, ReadTodoCompleteWithGoalRequest request, Pageable pageable){
-        Slice<Goal> goals;
-        if (Objects.isNull(request.lastGoalId()) || request.lastGoalId() <= 0) {
-            goals = goalRepository.findByUser_UserId(userId, pageable);
-        } else {
-            goals = goalRepository.findByGoalIdAndUser_UserId(request.lastGoalId(), userId, pageable);
-        }
-
-        return goals;
-    }
 }
