@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface FollowRepository extends JpaRepository<Follow, Integer> {
     @Query(
             "SELECT COUNT(f) > 0 " +
@@ -24,5 +26,7 @@ public interface FollowRepository extends JpaRepository<Follow, Integer> {
     int countByFollowee(@Param("userId") int userId);
 
 
+    @Query("select f.followee.userId from Follow f where f.follower.userId = :userId")
+    List<Integer> findFolloweeIdsByFollowerId(@Param("userId") int userId);
 }
 
