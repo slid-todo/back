@@ -1,11 +1,19 @@
 package com.codeit.todo.service.follow.impl;
 
+import com.codeit.todo.common.exception.auth.AuthorizationDeniedException;
+import com.codeit.todo.common.exception.follow.FollowNotFoundException;
+import com.codeit.todo.common.exception.user.UserNotFoundException;
 import com.codeit.todo.domain.Complete;
+import com.codeit.todo.domain.Follow;
+import com.codeit.todo.domain.User;
 import com.codeit.todo.repository.CompleteRepository;
 import com.codeit.todo.repository.FollowRepository;
 import com.codeit.todo.repository.LikesRepository;
+import com.codeit.todo.repository.UserRepository;
 import com.codeit.todo.service.follow.FollowService;
 import com.codeit.todo.web.dto.request.follow.ReadFollowRequest;
+import com.codeit.todo.web.dto.response.follow.CreateFollowResponse;
+import com.codeit.todo.web.dto.response.follow.DeleteFollowResponse;
 import com.codeit.todo.web.dto.response.follow.ReadFollowResponse;
 import com.codeit.todo.web.dto.response.slice.CustomSlice;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +34,7 @@ public class FollowServiceImpl implements FollowService {
     private final FollowRepository followRepository;
     private final CompleteRepository completeRepository;
     private final LikesRepository likesRepository;
+    private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
     @Override
@@ -54,5 +63,39 @@ public class FollowServiceImpl implements FollowService {
                 : null;
 
         return new CustomSlice<>(responses, pageable, completes.hasNext(), nextCursor);
+    }
+
+    @Override
+    public CreateFollowResponse registerFollow(int followerId, int followeeId) {
+        if (followRepository.existsByFollower_FollowerIdAndFollowee_FolloweeId(followeeId, followerId)) {
+            throw new AuthorizationDeniedException("이미 팔로우로 등록한 회원입니다.");
+        }
+
+        User follower = getUser(followerId);
+        User followee = getUser(followeeId);
+
+        Follow follow = Follow.from(follower, followee);
+        Follow savedFollow = followRepository.save(follow);
+
+        return CreateFollowResponse.fromEntity(savedFollow);
+    }
+
+    @Override
+    public DeleteFollowResponse cancelFollow(int followerId, int followeeId) {
+        if (!followRepository.existsByFollower_FollowerIdAndFollowee_FolloweeId(followeeId, followerId)) {
+            throw new AuthorizationDeniedException("팔로우 내역이 존재하지 않습니다.");
+        }
+
+        Follow follow = followRepository.findByFollower_UserIdAndFollowee_UserId(followerId, followeeId)
+                .orElseThrow(() -> new FollowNotFoundException("FollowerId : " + followerId + ", FolloweeId : " + followeeId));
+
+        followRepository.delete(follow);
+
+        return DeleteFollowResponse.from(followerId, followeeId);
+    }
+
+    private User getUser(int userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(String.valueOf(userId), "User"));
     }
 }
