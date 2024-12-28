@@ -7,5 +7,5 @@ import com.codeit.todo.web.dto.response.complete.UpdateCompleteResponse;
 public interface CompleteService {
     UpdateCompleteResponse updateCompleteInfo(int userId, int completeId, UpdateCompleteRequest request);
 
-    ReadCompleteDetailResponse readComplete(int userId, int completeId);
+    ReadCompleteDetailResponse readComplete(int completeId, int userId);
 }

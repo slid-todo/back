@@ -44,8 +44,9 @@ public class CompleteServiceImpl implements CompleteService {
 
     @Transactional(readOnly = true)
     @Override
-    public ReadCompleteDetailResponse readComplete(int userId, int completeId) {
-        Complete complete = getComplete(userId, completeId);
+    public ReadCompleteDetailResponse readComplete(int completeId, int userId) {
+        Complete complete = completeRepository.findById(completeId)
+                .orElseThrow(() -> new CompleteNotFoundException(String.valueOf(completeId)));
         List<ReadCommentResponse> commentResponses = complete.getComments().stream()
                 .map(ReadCommentResponse::fromEntity)
                 .toList();
