@@ -175,13 +175,10 @@ public class UserServiceImpl implements UserService {
 
         followRepository.deleteByFolloweeUserId(userId);
         followRepository.deleteByFollowerUserId(userId);
-//        goalRepository.deleteByUserId(userId);
 
         goalRepository.findByUser_UserId(userId).forEach(goalRepository::delete);
         likesRepository.findByUser_UserId(userId).forEach(likesRepository::delete);
         commentRepository.findByUser_UserId(userId).forEach(commentRepository::delete);
-
-
 
         return UpdateUserStatusResponse.from(userId);
     }

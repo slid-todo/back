@@ -42,8 +42,4 @@ and :today between t.startDate and t.endDate
 
     List<Goal> findByGoalTitleContains(@Param("keyword") String keyword);
 
-//    @Modifying
-//    @Query("DELETE FROM Goal g " +
-//            "WHERE g.user.userId = :userId")
-//    void deleteByUserId(@Param("userId") int userId);
 }
