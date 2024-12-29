@@ -123,7 +123,7 @@ public class AuthController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "탈퇴 성공")
     })
-    @PutMapping("/withdrawl")
+    @DeleteMapping("/withdrawl")
     public Response<UpdateUserStatusResponse> userWithdraw(
             HttpServletRequest request,
             @AuthenticationPrincipal CustomUserDetails userDetails
