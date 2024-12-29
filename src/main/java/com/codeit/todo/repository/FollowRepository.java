@@ -12,9 +12,9 @@ import java.util.Optional;
 public interface FollowRepository extends JpaRepository<Follow, Integer> {
     @Query(
             "SELECT COUNT(f) > 0 " +
-                    "from Follow f " +
-                    "WHERE f.followee.userId = :userId " +
-                    "AND f.follower.userId = :targetUserId "
+                    "FROM Follow f " +
+                    "WHERE f.follower.userId = :userId " +
+                    "AND f.followee.userId = :targetUserId "
     )
     boolean existsByFollower_FollowerIdAndFollowee_FolloweeId(@Param("userId")int userId, @Param("targetUserId")int targetUserId);
 
