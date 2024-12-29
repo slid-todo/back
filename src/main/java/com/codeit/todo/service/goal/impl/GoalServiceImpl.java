@@ -137,7 +137,8 @@ public class GoalServiceImpl implements GoalService {
         if (Objects.isNull(request.lastGoalId()) || request.lastGoalId() <= 0) {
             goals = goalRepository.findByUser_UserId(userId, pageable);
         } else {
-            goals = goalRepository.findByGoalIdAndUser_UserId(request.lastGoalId(), userId, pageable);
+            int lastGoalId = request.lastGoalId();
+            goals = goalRepository.findByGoalIdAndUser_UserIdAndGoalIdGreaterThan(userId, lastGoalId, pageable);
         }
         return goals;
     }
