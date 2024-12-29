@@ -23,6 +23,7 @@ public record SignUpRequest(
                 .email(this.email)
                 .password(encodedPassword)
                 .profilePic(profilePic)
+                .userStatus("가입")
                 .build();
     }
 

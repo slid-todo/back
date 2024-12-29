@@ -21,4 +21,6 @@ public interface UserService {
     ReadTargetUserResponse findTargetUserProfile(int userId, int targetUserId);
 
     ReadMyPageResponse findUserInfoAndFollows(int userId);
+
+    UpdateUserStatusResponse updateUserStatus(int userId);
 }

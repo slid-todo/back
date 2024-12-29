@@ -31,6 +31,10 @@ public class User {
     @Column(name = "profile_pic", nullable = false)
     private String profilePic;
 
+    @Column(name = "user_status", nullable = false)
+    private String userStatus;
+
+
     @OneToMany(mappedBy= "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Goal> goals = new ArrayList<>();
 
@@ -43,12 +47,13 @@ public class User {
     private List<Follow> followees = new ArrayList<>();
 
     @Builder
-    public User(int userId, String name, String email, String password, String profilePic) {
+    public User(int userId, String name, String email, String password, String profilePic, String userStatus) {
         this.userId = userId;
         this.name = name;
         this.email = email;
         this.password = password;
         this.profilePic = profilePic;
+        this.userStatus = userStatus;
     }
 
     public void updateProfilePic(String completePicUrl){
@@ -58,4 +63,6 @@ public class User {
     public void updatePassword(String password){
         this.password = password;
     }
+
+    public void updateStatus(){this.userStatus = "탈퇴";}
 }

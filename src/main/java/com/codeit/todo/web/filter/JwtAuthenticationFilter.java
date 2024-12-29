@@ -37,6 +37,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 ));
             }
 
+            if(jwtTokenProvider.isTokenBlackListed(jwtToken)){
+                log.info("블랙리스트에 추가된 토큰 : {}", jwtToken);
+                throw new JwtException(ErrorStatus.toErrorStatus(
+                        "블랙리스트에 추가되어 있는 토큰입니다.", 401
+
+                ));
+            }
+
             log.info("토큰이 인식되었습니다. : {}", jwtToken);
             if (jwtTokenProvider.validToken(jwtToken)) {
                 log.info("토큰이 유효합니다. : {}", jwtToken);
