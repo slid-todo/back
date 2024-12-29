@@ -171,7 +171,7 @@ public class TodoServiceImpl implements TodoService {
                     .count();
 
             certifiedCompletes += todo.getCompletes().stream()
-                    .filter(complete -> COMPLETE.equals(complete.getCompleteStatus()))
+                    .filter(complete -> today.equals(complete.getStartDate()) && COMPLETE.equals(complete.getCompleteStatus()))
                     .count();
         }
 
