@@ -19,7 +19,12 @@ public interface GoalRepository extends JpaRepository<Goal, Integer> {
 
     Slice<Goal> findByUser_UserId(@Param("userId") int userId, Pageable pageable);
 
-    Slice<Goal> findByGoalIdAndUser_UserId(@Param("lastGoalId") Integer lastGoalId, @Param("userId") int userId, Pageable pageable);
+    @Query(
+            "SELECT g FROM Goal g " +
+                    "WHERE g.user.userId = :userId " +
+                    "AND g.goalId > :lastGoalId "
+    )
+    Slice<Goal> findByGoalIdAndUser_UserIdAndGoalIdGreaterThan(@Param("userId") int userId, @Param("lastGoalId")int lastGoalId, Pageable pageable);
 
     @Query("""
 select g
