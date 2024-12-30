@@ -6,7 +6,6 @@ import com.codeit.todo.common.exception.user.UserNotFoundException;
 import com.codeit.todo.domain.Goal;
 import com.codeit.todo.domain.Todo;
 import com.codeit.todo.domain.User;
-import com.codeit.todo.repository.CompleteRepository;
 import com.codeit.todo.repository.GoalRepository;
 import com.codeit.todo.repository.TodoRepository;
 import com.codeit.todo.repository.UserRepository;
@@ -49,10 +48,6 @@ public class GoalServiceImpl implements GoalService {
     @Override
     public List<ReadGoalsResponse> findGoalList(int userId) {
         List<Goal> goals= goalRepository.findByUser_UserId(userId);
-
-        if (goals.isEmpty()) {
-            throw new GoalNotFoundException("0");
-        }
 
         return goals.stream()
                 .map(goal-> {
