@@ -20,6 +20,8 @@ public record ReadCompleteDetailResponse(
         Boolean likeStatus,
         int likeCount,
         int commentCount,
+        String goalName,
+        String todoName,
         List<ReadCommentResponse> comments
 ) {
     public static ReadCompleteDetailResponse from(Complete complete, List<ReadCommentResponse> commentResponses, Boolean likeStatus) {
@@ -35,6 +37,8 @@ public record ReadCompleteDetailResponse(
                 .likeStatus(likeStatus)
                 .commentCount(commentResponses.size())
                 .comments(commentResponses)
+                .goalName(complete.getTodo().getGoal().getGoalTitle())
+                .todoName(complete.getTodo().getTodoTitle())
                 .build();
     }
 }
