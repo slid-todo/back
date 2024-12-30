@@ -8,6 +8,7 @@ import java.util.List;
 
 @Builder
 public record ReadSearchResponse (
+        int userId,
         String name,
         String profilePic,
 
@@ -15,6 +16,7 @@ public record ReadSearchResponse (
 ){
     public static ReadSearchResponse from(User user, List<ReadGoalSearchResponse> responses) {
         return ReadSearchResponse.builder()
+                .userId(user.getUserId())
                 .name(user.getName())
                 .profilePic(user.getProfilePic())
                 .goals(responses)
