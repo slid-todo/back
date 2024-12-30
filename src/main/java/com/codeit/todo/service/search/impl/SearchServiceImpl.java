@@ -14,7 +14,6 @@ import com.codeit.todo.service.search.SearchService;
 import com.codeit.todo.web.dto.request.search.ReadSearchRequest;
 import com.codeit.todo.web.dto.response.goal.ReadGoalSearchResponse;
 import com.codeit.todo.web.dto.response.search.ReadSearchResponse;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -40,6 +40,10 @@ public class SearchServiceImpl implements SearchService {
     public List<ReadSearchResponse> findUserAndGoal(int userId, ReadSearchRequest request) {
         String searchField = request.searchField();
         String keyword = request.keyword();
+
+        if(!Objects.nonNull(keyword) || keyword.isEmpty()){
+            throw new SearchException(ErrorStatus.toErrorStatus("검색어가 입력되지 않았습니다.", BAD_REQUEST));
+        }
 
         log.info("Starting search for field: {} with keyword: {}", searchField, keyword);
 
