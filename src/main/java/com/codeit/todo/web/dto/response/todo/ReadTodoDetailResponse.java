@@ -9,6 +9,7 @@ import java.time.LocalDate;
 public record ReadTodoDetailResponse(
         int todoId,
         String goalTitle,
+        String goalColor,
         String todoTitle,
         LocalDate startDate,
         LocalDate endDate,
@@ -20,6 +21,7 @@ public record ReadTodoDetailResponse(
         return ReadTodoDetailResponse.builder()
                 .todoId(todo.getTodoId())
                 .goalTitle(todo.getGoal().getGoalTitle())
+                .goalColor(todo.getGoal().getColor())
                 .todoTitle(todo.getTodoTitle())
                 .startDate(todo.getStartDate())
                 .endDate(todo.getEndDate())
