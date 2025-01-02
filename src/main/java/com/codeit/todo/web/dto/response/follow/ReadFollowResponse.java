@@ -9,6 +9,9 @@ import java.time.LocalDateTime;
 public record ReadFollowResponse(
         int completeId,
         String completePic,
+        String completeContent,
+        String profilePic,
+        String username,
         LocalDateTime createdAt,
         Boolean likeStatus,
         int likeCount,
@@ -20,6 +23,9 @@ public record ReadFollowResponse(
         return ReadFollowResponse.builder()
                 .completeId(complete.getCompleteId())
                 .completePic(complete.getCompletePic())
+                .completeContent(complete.getNote())
+                .profilePic(complete.getTodo().getGoal().getUser().getProfilePic())
+                .username(complete.getTodo().getGoal().getUser().getName())
                 .createdAt(complete.getCreatedAt())
                 .likeStatus(likeStatus)
                 .likeCount(complete.getLikes().size())
