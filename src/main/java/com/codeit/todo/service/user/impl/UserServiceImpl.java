@@ -143,12 +143,12 @@ public class UserServiceImpl implements UserService {
 
     @Transactional(readOnly = true)
     @Override
-    public ReadTargetUserResponse findTargetUserProfile(int userId, int targetUserId) {
-        User targetUser = getUser(targetUserId);
+    public ReadTargetUserResponse findTargetUserProfile(int followeeId, int followerId) {
+        User targetUser = getUser(followerId);
 
-        boolean isFollow = followRepository.existsByFollower_FollowerIdAndFollowee_FolloweeId(userId, targetUserId);
+        boolean isFollow = followRepository.existsByFollower_FollowerIdAndFollowee_FolloweeId(followerId, followeeId);
 
-        List<ReadTargetUserCompleteResponse> responses = goalRepository.findByUser_UserId(targetUserId).stream()
+        List<ReadTargetUserCompleteResponse> responses = goalRepository.findByUser_UserId(followerId).stream()
                 .flatMap(goal -> goal.getTodos().stream())
                 .flatMap(todo -> todo.getCompletes().stream())
                 .map(ReadTargetUserCompleteResponse::from)

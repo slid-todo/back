@@ -14,10 +14,10 @@ public interface FollowRepository extends JpaRepository<Follow, Integer> {
     @Query(
             "SELECT COUNT(f) > 0 " +
                     "FROM Follow f " +
-                    "WHERE f.follower.userId = :userId " +
-                    "AND f.followee.userId = :targetUserId "
+                    "WHERE f.follower.userId = :followerId " +
+                    "AND f.followee.userId = :followeeId "
     )
-    boolean existsByFollower_FollowerIdAndFollowee_FolloweeId(@Param("userId")int userId, @Param("targetUserId")int targetUserId);
+    boolean existsByFollower_FollowerIdAndFollowee_FolloweeId(@Param("followerId")int followerId, @Param("followeeId")int followeeId);
 
     @Query("SELECT COUNT(*) FROM Follow f " +
             "WHERE f.follower.userId = :userId ")
