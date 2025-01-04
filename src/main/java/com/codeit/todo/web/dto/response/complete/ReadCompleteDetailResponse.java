@@ -1,6 +1,7 @@
 package com.codeit.todo.web.dto.response.complete;
 
 import com.codeit.todo.domain.Complete;
+import com.codeit.todo.domain.User;
 import com.codeit.todo.web.dto.response.comment.ReadCommentResponse;
 import lombok.Builder;
 
@@ -11,6 +12,9 @@ import java.util.List;
 @Builder
 public record ReadCompleteDetailResponse(
         int completeId,
+        int userId,
+        String profilePic,
+        String userName,
         String completePic,
         String note,
         String completeLink,
@@ -25,8 +29,13 @@ public record ReadCompleteDetailResponse(
         List<ReadCommentResponse> comments
 ) {
     public static ReadCompleteDetailResponse from(Complete complete, List<ReadCommentResponse> commentResponses, Boolean likeStatus) {
+        User user = complete.getTodo().getGoal().getUser();
+
         return ReadCompleteDetailResponse.builder()
                 .completeId(complete.getCompleteId())
+                .userId(user.getUserId())
+                .profilePic(user.getProfilePic())
+                .userName(user.getName())
                 .completePic(complete.getCompletePic())
                 .note(complete.getNote())
                 .completeLink(complete.getCompleteLink())
