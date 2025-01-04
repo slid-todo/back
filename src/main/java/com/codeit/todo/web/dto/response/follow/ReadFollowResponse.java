@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 @Builder
 public record ReadFollowResponse(
         int completeId,
+        int userId,
         String completePic,
         String completeContent,
         String profilePic,
@@ -22,6 +23,7 @@ public record ReadFollowResponse(
     public static ReadFollowResponse from(Complete complete, Boolean likeStatus) {
         return ReadFollowResponse.builder()
                 .completeId(complete.getCompleteId())
+                .userId(complete.getTodo().getGoal().getUser().getUserId())
                 .completePic(complete.getCompletePic())
                 .completeContent(complete.getNote())
                 .profilePic(complete.getTodo().getGoal().getUser().getProfilePic())
