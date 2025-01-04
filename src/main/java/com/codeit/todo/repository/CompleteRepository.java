@@ -15,6 +15,6 @@ public interface CompleteRepository extends JpaRepository<Complete, Integer> {
     @Query("select c from Complete c where c.todo.goal.user.userId in :userIds order by c.createdAt desc")
     Slice<Complete> findByFollowees(@Param("userIds") List<Integer> userIds, Pageable pageable);
 
-    @Query("select c from Complete c where c.todo.goal.user.userId in :userIds and c.completeId > :completeId order by c.createdAt desc")
+    @Query("select c from Complete c where c.todo.goal.user.userId in :userIds and c.completeId < :completeId order by c.createdAt desc")
     Slice<Complete> findByFolloweesAfterCompleteId(@Param("userIds")List<Integer> followeeIds, @Param("completeId") Integer completeId, Pageable pageable);
 }
