@@ -150,7 +150,7 @@ public class UserServiceImpl implements UserService {
 
         List<ReadTargetUserCompleteResponse> responses = goalRepository.findByUser_UserId(followerId).stream()
                 .flatMap(goal -> goal.getTodos().stream())
-                .flatMap(todo -> todo.getCompletes().stream())
+                .flatMap(todo -> todo.getCompletes().stream().filter(complete -> complete.getCompleteStatus().equals("인증")))
                 .map(ReadTargetUserCompleteResponse::from)
                 .toList();
 
