@@ -15,6 +15,7 @@ public class CorsConfig {
         configuration.addAllowedOrigin("https://localhost:3000");
         configuration.addAllowedOrigin("https://local.solidtodo.shop");
         configuration.addAllowedOrigin("https://front-sooty-three.vercel.app");
+        configuration.addAllowedOrigin("www.zzikzzik.shop");
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
         configuration.setAllowCredentials(true);
