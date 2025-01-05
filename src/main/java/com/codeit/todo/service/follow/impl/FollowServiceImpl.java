@@ -31,6 +31,8 @@ import java.util.Objects;
 @Transactional
 public class FollowServiceImpl implements FollowService {
 
+    private static final String COMPLETE = "인증";
+
     private final FollowRepository followRepository;
     private final CompleteRepository completeRepository;
     private final LikesRepository likesRepository;
@@ -45,9 +47,9 @@ public class FollowServiceImpl implements FollowService {
 
         Slice<Complete> completes;
         if (Objects.isNull(request.lastCompleteId()) || request.lastCompleteId() <= 0) {
-            completes = completeRepository.findByFollowees(followeeIds, pageable);
+            completes = completeRepository.findByFollowees(followeeIds, pageable, COMPLETE);
         } else {
-            completes = completeRepository.findByFolloweesAfterCompleteId(followeeIds, request.lastCompleteId(), pageable);
+            completes = completeRepository.findByFolloweesAfterCompleteId(followeeIds, request.lastCompleteId(), pageable, COMPLETE);
         }
 
         List<ReadFollowResponse> responses = completes.stream()
