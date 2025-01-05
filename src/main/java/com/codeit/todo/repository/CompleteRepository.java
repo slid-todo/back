@@ -12,9 +12,10 @@ import java.util.List;
 public interface CompleteRepository extends JpaRepository<Complete, Integer> {
     List<Complete> findByTodo_TodoId(int todoId);
 
-    @Query("select c from Complete c where c.todo.goal.user.userId in :userIds order by c.createdAt desc")
-    Slice<Complete> findByFollowees(@Param("userIds") List<Integer> userIds, Pageable pageable);
+    @Query("select c from Complete c where c.todo.goal.user.userId in :userIds and c.completeStatus = :completeStatus order by c.createdAt desc")
+    Slice<Complete> findByFollowees(@Param("userIds") List<Integer> userIds, Pageable pageable, @Param("completeStatus") String completeStatus);
 
-    @Query("select c from Complete c where c.todo.goal.user.userId in :userIds and c.completeId < :completeId order by c.createdAt desc")
-    Slice<Complete> findByFolloweesAfterCompleteId(@Param("userIds")List<Integer> followeeIds, @Param("completeId") Integer completeId, Pageable pageable);
+    @Query("select c from Complete c where c.todo.goal.user.userId in :userIds and c.completeId < :completeId and c.completeStatus = :completeStatus order by c.createdAt desc")
+    Slice<Complete> findByFolloweesAfterCompleteId(@Param("userIds")List<Integer> followeeIds, @Param("completeId") Integer completeId, Pageable pageable,
+                                                   @Param("completeStatus") String completeStatus);
 }
