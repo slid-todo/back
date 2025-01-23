@@ -63,7 +63,7 @@ public class UserServiceImpl implements UserService {
         String encodedPassword = passwordEncoder.encode(request.password());
 
         //회원가입 시 기본 프로필 이미지 등록
-        String profilePic = "https://slid-todo.s3.ap-northeast-2.amazonaws.com/auth/default_profilepic_mouse.png";
+        String profilePic = "https://zzikzzik-bucket.s3.ap-northeast-2.amazonaws.com/default_profilepic_mouse.png";
 
         User user = request.toEntity(encodedPassword, profilePic);
         User savedUser = userRepository.save(user);
