@@ -48,7 +48,9 @@ public class SearchServiceImpl implements SearchService {
         log.info("Starting search for field: {} with keyword: {}", searchField, keyword);
 
         if( searchField.equals(SearchField.USER_NAME.getValue()) ){
-            List<User> searchedUsers = userRepository.findByNameContains(keyword);
+            List<User> searchedUsers = userRepository.findByNameStartingWith(keyword);
+            //List<User> searchedUsers = userRepository.findByNameContains(keyword);
+            //List<User> searchedUsers = userRepository.searchByFullTextName(keyword);
             if(searchedUsers.isEmpty()) throw new SearchException(ErrorStatus.toErrorStatus("유저에 대한 검색 결과가 없습니다.", NOT_FOUND));
 
             List<ReadSearchResponse> responses = searchedUsers.stream()
@@ -63,7 +65,8 @@ public class SearchServiceImpl implements SearchService {
             return responses;
 
         }else if(searchField.equals(SearchField.GOAL_TITLE.getValue())){
-            List<Goal> searchedGoals = goalRepository.findByGoalTitleContains(keyword);
+            List<Goal> searchedGoals = goalRepository.searchByFullTextTitle("+" + keyword + "*");
+            //List<Goal> searchedGoals = goalRepository.findByGoalTitleContains(keyword);
             if(searchedGoals.isEmpty()) throw new SearchException(ErrorStatus.toErrorStatus("목표에 대한 검색 결과가 없습니다.", NOT_FOUND));
 
             Map<User, List<Goal>> userGoalsMap = searchedGoals.stream()

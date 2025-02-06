@@ -45,6 +45,10 @@ and :today between t.startDate and t.endDate
 """)
     Slice<Goal> findByUserAndHasTodosAfterLastGoalId(@Param("lastGoalId") Integer lastGoalId, @Param("userId") int userId, Pageable pageable,  @Param("today") LocalDate today);
 
-    List<Goal> findByGoalTitleContains(@Param("keyword") String keyword);
+    //List<Goal> findByGoalTitleContains(@Param("keyword") String keyword);
+
+
+    @Query(value = "SELECT * FROM goal WHERE MATCH(goal_title) AGAINST(:keyword IN BOOLEAN MODE) LIMIT 10000", nativeQuery = true)
+    List<Goal> searchByFullTextTitle(@Param("keyword") String keyword);
 
 }
