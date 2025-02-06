@@ -12,6 +12,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name= "user", indexes= @Index(name="idx_user_name", columnList = "name"))
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
